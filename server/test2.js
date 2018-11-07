@@ -23,10 +23,14 @@ const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 let count;
 
-const deploy = async () => {
+const deploy = async (uri) => {
+  const balanceOf = await contract.methods.balanceOf(myAddress).call();
+  let totalCount = await contract.methods.totalSupply.call();
+
   let count = await web3.eth.getTransactionCount(myAddress);
 
   console.log("Count: ", count);
+  console.log("TotalSupply: ", totalCount);
 
   var rawTransaction = {
     from: myAddress,
@@ -35,7 +39,7 @@ const deploy = async () => {
     to: contractAddress,
     value: "0x0",
     data: contract.methods
-      .mintWithTokenURI(myAddress, 0, "This is token 1")
+      .mintWithTokenURI(myAddress, count, "This is token 1")
       .encodeABI(),
     nonce: web3.utils.toHex(count)
   };
@@ -50,9 +54,9 @@ const deploy = async () => {
     .on("transactionHash", console.log);
 
   const isMinter = await contract.methods.isMinter(myAddress).call();
-  const balanceOf = await contract.methods.balanceOf(myAddress).call();
+  
 
   console.log("Name: ", isMinter, " Balance: ", balanceOf);
 };
 
-deploy();
+deploy("My name is same!");
