@@ -46,18 +46,6 @@ class tokenInterface {
     console.log("Accounts: ", accounts);
     console.log("Count: ", count);
 
-    // var rawTransaction = {
-    //   from: myAddress,
-    //   gasPrice: web3.utils.toHex(20 * 1e9),
-    //   gasLimit: web3.utils.toHex(210000),
-    //   to: contractAddress,
-    //   value: "0x0",
-    //   data: contract.methods
-    //     .mintWithTokenURI(myAddress, count, "This is token 1")
-    //     .encodeABI(),
-    //   nonce: web3.utils.toHex(count)
-    // };
-
 
     const contractMethod = contract.methods
     .mintWithTokenURI(myAddress, count, "This is token 1")
@@ -73,20 +61,12 @@ class tokenInterface {
       web3.utils.toHex(count)
     );
 
-//////
-    // let transaction = new Tx(rawTransaction);
-    // transaction.sign(privateKey);
+
 
     let transaction = this.signTransaction(rawTransaction, privateKey)
 
-    web3.eth
-      .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
-      .once("receipt", receipt => {
-        this.txLog[receipt.transactionHash] = receipt;
-        this.txIndex.push(receipt.transactionHash);
-        //console.log("Added to object", this.txLog[receipt.transactionHash]);
-        console.log("txIndex: ", this.txIndex);
-      });
+    this.sendTransaction(transaction);
+
 
     const isMinter = await contract.methods.isMinter(myAddress).call();
 
@@ -167,7 +147,7 @@ class tokenInterface {
         this.txLog[receipt.transactionHash] = receipt;
         this.txIndex.push(receipt.transactionHash);
         //console.log("Added to object", this.txLog[receipt.transactionHash]);
-        //console.log("txIndex: ", this.txIndex);
+        console.log("txIndex: ", this.txIndex);
       });
   }
 

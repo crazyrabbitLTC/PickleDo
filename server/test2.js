@@ -40,7 +40,8 @@ const deploy = async (uri) => {
   const count = await getCount();
   console.log("Accounts: ", accounts);
   console.log("Count: ", count);
-  //console.log("TotalSupply: ", totalCount);
+
+  
 
   var rawTransaction = {
     from: myAddress,
