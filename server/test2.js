@@ -25,7 +25,12 @@ const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 
 
-let count;
+
+
+const getCount = async () => {
+    const count = await web3.eth.getTransactionCount(myAddress);
+    return count;
+}
 
 const deploy = async (uri) => {
   const balanceOf = await contract.methods.balanceOf(myAddress).call();
@@ -33,8 +38,7 @@ const deploy = async (uri) => {
   let totalCount = await contract.methods.totalSupply.call();
 
 
-  let count = await web3.eth.getTransactionCount(myAddress);
-
+  const count = await getCount();
   console.log("Accounts: ", accounts);
   console.log("Count: ", count);
   //console.log("TotalSupply: ", totalCount);
@@ -65,10 +69,13 @@ const deploy = async (uri) => {
 
   console.log("Name: ", isMinter, " Balance: ", balanceOf);
 
+  
+
   return(balanceOf);
   
 };
 
+getCount();
 deploy("My name is same!");
 
 module.exports = deploy;

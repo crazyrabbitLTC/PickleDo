@@ -31,7 +31,7 @@ watcher
 
 watcher.on('change', async (thisPath) => {
 
-//anothertestevenmoretestwhendoiuseupallmyethere?
+//anothe
     try {
        await fs.readFile(path.join(__dirname, thisPath), async (err, buf) => {
 
