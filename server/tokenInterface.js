@@ -88,6 +88,54 @@ class tokenInterface {
 
   async safeTransferFrom(addressFrom, addressTo, tokenId){}
 
+  async setApprovalForAll(addresTo, boolApproved){}
+
+  async transferFrom(addressFrom, addressTo, tokenId){}
+
+  async balanceOf(address){}
+
+  async getApproved(tokenId){}
+
+  async isApprovedForAll(addressOwner, addressOperator){}
+
+  async isMinter(addressMinter){}
+
+  async name() {}
+
+  async ownerOf(tokenId){}
+
+  async supportsInterFace(interfaceIdBytes4){}
+
+  async symbol(){}
+
+  async tokenByIndex(index){}
+
+  async tokenOfOwnerByIndex(addressOwner, index){}
+
+  async tokenURI(tokenId){}
+
+  async totalSupply(){}
+
+
+  buildTransaction(from, gasPrice, gasLimit, to, value, data, nonce){
+
+    const rawTransaction = {
+        from,
+        gasPrice,
+        gasLimit,
+        to,
+        value,
+        data,
+        nonce,
+    }
+
+    const transaction = new Tx(rawTransaction);
+
+    return transaction;
+  }
+
+
+
 
   static connect(values) {
     return new tokenInterface(values);
