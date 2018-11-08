@@ -64,6 +64,12 @@ const deploy = async (uri) => {
   
 
   console.log("Name: ", isMinter, " Balance: ", balanceOf);
+
+  return(balanceOf);
+  
 };
 
 deploy("My name is same!");
+
+module.exports = deploy;
+

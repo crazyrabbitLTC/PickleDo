@@ -3,6 +3,8 @@ var fs = require('fs');
 var md5 = require('md5');
 var path = require('path');
 
+const deploy = require('./test2');
+
 // chokidar.watch('.', {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
 //     console.log(event, path);
 //     if (event == "add"){
@@ -27,20 +29,30 @@ watcher
   .on('change', thisPath => log(`File ${thisPath} has been changed`))
   .on('unlink', thisPath => log(`File ${thisPath} has been removed`));
 
-watcher.on('add', async (thisPath) => {
+watcher.on('change', async (thisPath) => {
 
-
+//anothertestevenmoretestwhendoiuseupallmyethere?
     try {
-        const fileHash = await md5(fs.readFile(path.join(__dirname, thisPath)));
+       await fs.readFile(path.join(__dirname, thisPath), async (err, buf) => {
 
-        const fileStructure = {
-            file: thisPath,
-            hash: fileHash
-        }
+            const fileHash = await md5(buf);
+
+            const fileStructure = {
+                file: thisPath,
+                hash: fileHash
+            }
+
+            files.push(fileStructure);
+            const balance = await deploy(fileHash);
+            console.log("Array is: ", files)
+
+        });
+
+
     
-        files.push(fileStructure);
-        console.log("Array is: ", files)
+
         
+        //console.log("Balance after operation is: ", balance);
     } catch (err) {
         console.log(err);
     }
@@ -48,4 +60,3 @@ watcher.on('add', async (thisPath) => {
 
 });
 
-  ;
