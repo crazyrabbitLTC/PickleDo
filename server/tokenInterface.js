@@ -26,16 +26,16 @@ class tokenInterface {
   constructor(values) {
     this.values = values;
 
-    this.transactionHistory = {};
+    this.txLog = {};
+    this.txIndex = [];
   }
 
   async getCount() {
     const count = await web3.eth.getTransactionCount(myAddress);
     return count;
-  };
+  }
 
   async deploy() {
-
     console.log("Using Module Class Version");
 
     const balanceOf = await contract.methods.balanceOf(myAddress).call();
@@ -46,117 +46,130 @@ class tokenInterface {
     console.log("Accounts: ", accounts);
     console.log("Count: ", count);
 
+    // var rawTransaction = {
+    //   from: myAddress,
+    //   gasPrice: web3.utils.toHex(20 * 1e9),
+    //   gasLimit: web3.utils.toHex(210000),
+    //   to: contractAddress,
+    //   value: "0x0",
+    //   data: contract.methods
+    //     .mintWithTokenURI(myAddress, count, "This is token 1")
+    //     .encodeABI(),
+    //   nonce: web3.utils.toHex(count)
+    // };
 
-    var rawTransaction = {
-      from: myAddress,
-      gasPrice: web3.utils.toHex(20 * 1e9),
-      gasLimit: web3.utils.toHex(210000),
-      to: contractAddress,
-      value: "0x0",
-      data: contract.methods
-        .mintWithTokenURI(myAddress, count, "This is token 1")
-        .encodeABI(),
-      nonce: web3.utils.toHex(count)
-    };
 
-    //console.log("Raw Transaction: ", rawTransaction);////
+    const contractMethod = contract.methods
+    .mintWithTokenURI(myAddress, count, "This is token 1")
+    .encodeABI();
 
-    let transaction = new Tx(rawTransaction);
-    transaction.sign(privateKey);
+    var rawTransaction = this.buildTransaction(
+      myAddress,
+      web3.utils.toHex(20 * 1e9),
+      web3.utils.toHex(210000),
+      contractAddress,
+      "0x0",
+      contractMethod,
+      web3.utils.toHex(count)
+    );
+
+//////
+    // let transaction = new Tx(rawTransaction);
+    // transaction.sign(privateKey);
+
+    let transaction = this.signTransaction(rawTransaction, privateKey)
 
     web3.eth
-    .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
-    .once('receipt', (receipt) => {
-        this.transactionHistory[receipt.transactionHash] = receipt;
-        
-        console.log("Added to object", this.transactionHistory[receipt.transactionHash]);})
-    
+      .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
+      .once("receipt", receipt => {
+        this.txLog[receipt.transactionHash] = receipt;
+        this.txIndex.push(receipt.transactionHash);
+        //console.log("Added to object", this.txLog[receipt.transactionHash]);
+        console.log("txIndex: ", this.txIndex);
+      });
 
     const isMinter = await contract.methods.isMinter(myAddress).call();
 
     console.log("Name: ", isMinter, " Balance: ", balanceOf);
 
     return balanceOf;
-  };
+  }
 
   async addMinter(address) {}
 
-  async approve(addressTo, tokenId){}
+  async approve(addressTo, tokenId) {}
 
   async mint(addressTo, tokenId) {}
 
-  async mintWithTokenURI(addressTo, tokenId, URIString){}
+  async mintWithTokenURI(addressTo, tokenId, URIString) {}
 
-  async renounceMinter(){}
+  async renounceMinter() {}
 
-  async safeTransferFrom(addressFrom, addressTo, tokenId){}
+  async safeTransferFrom(addressFrom, addressTo, tokenId) {}
 
-  async setApprovalForAll(addresTo, boolApproved){}
+  async setApprovalForAll(addresTo, boolApproved) {}
 
-  async transferFrom(addressFrom, addressTo, tokenId){}
+  async transferFrom(addressFrom, addressTo, tokenId) {}
 
-  async balanceOf(address){}
+  async balanceOf(address) {}
 
-  async getApproved(tokenId){}
+  async getApproved(tokenId) {}
 
-  async isApprovedForAll(addressOwner, addressOperator){}
+  async isApprovedForAll(addressOwner, addressOperator) {}
 
-  async isMinter(addressMinter){}
+  async isMinter(addressMinter) {}
 
   async name() {}
 
-  async ownerOf(tokenId){}
+  async ownerOf(tokenId) {}
 
-  async supportsInterFace(interfaceIdBytes4){}
+  async supportsInterFace(interfaceIdBytes4) {}
 
-  async symbol(){}
+  async symbol() {}
 
-  async tokenByIndex(index){}
+  async tokenByIndex(index) {}
 
-  async tokenOfOwnerByIndex(addressOwner, index){}
+  async tokenOfOwnerByIndex(addressOwner, index) {}
 
-  async tokenURI(tokenId){}
+  async tokenURI(tokenId) {}
 
-  async totalSupply(){}
+  async totalSupply() {}
 
-
-  buildTransaction(from, gasPrice, gasLimit, to, value, data, nonce){
-
+  buildTransaction(from, gasPrice, gasLimit, to, value, data, nonce) {
     const rawTransaction = {
-        from,
-        gasPrice,
-        gasLimit,
-        to,
-        value,
-        data,
-        nonce,
-    }
+      from,
+      gasPrice,
+      gasLimit,
+      to,
+      value,
+      data,
+      nonce
+    };
 
     const transaction = new Tx(rawTransaction);
 
     return transaction;
   }
 
-  signTransaction(transaction, privateKey){
-
+  signTransaction(transaction, privateKey) {
     transaction.sign(privateKey);
 
     return transaction;
   }
 
-  sendTransaction(transaction){
-
+  sendTransaction(transaction) {
     web3.eth
-    .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
-    .once("transactionHash", (hash) => {
+      .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
+      .once("transactionHash", hash => {
         console.log("Hash made! ", hash);
-    }).once('receipt', function(receipt){console.log(['transferToReceiver Receipt:', receipt]);})
-    .on('confirmation', (confirmationNumber) => {console.log('transferToReceiver confirmation: ' + confirmationNumber);})
-    
-
+      })
+      .once("receipt", receipt => {
+        this.txLog[receipt.transactionHash] = receipt;
+        this.txIndex.push(receipt.transactionHash);
+        //console.log("Added to object", this.txLog[receipt.transactionHash]);
+        //console.log("txIndex: ", this.txIndex);
+      });
   }
-
-
 
   static connect(values) {
     return new tokenInterface(values);

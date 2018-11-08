@@ -54,7 +54,7 @@ const deploy = async (uri) => {
     nonce: web3.utils.toHex(count)
   };
 
-  ///////
+  
 
   let transaction = new Tx(rawTransaction);
   transaction.sign(privateKey);
