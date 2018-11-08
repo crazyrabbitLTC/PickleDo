@@ -37,7 +37,7 @@ watcher.on('change', async (thisPath) => {
             }
 
             files.push(fileStructure);
-            const balance = await tokenInterface.deploy(fileHash);
+            const balance = await tokenInterface.mintToken(fileHash);
             //console.log("Array is: ", files)
 
         });

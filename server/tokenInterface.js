@@ -24,7 +24,6 @@ const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 class tokenInterface {
   constructor(values) {
-
     this.values = values;
     this.txLog = {};
     this.txIndex = [];
@@ -46,17 +45,20 @@ class tokenInterface {
     console.log("Accounts: ", this.accounts);
     console.log("Count: ", count);
 
-
     const contractMethod = contract.methods
-    .mintWithTokenURI(myAddress, count, "This is token 1")
-    .encodeABI();
+      .mintWithTokenURI(myAddress, count, "This is token 1")
+      .encodeABI();
 
-    const rawTransaction = this._buildTransaction(myAddress, contractAddress, contractMethod, count);
+    const rawTransaction = this._buildTransaction(
+      myAddress,
+      contractAddress,
+      contractMethod,
+      count
+    );
 
-    const transaction = this._signTransaction(rawTransaction, privateKey)
+    const transaction = this._signTransaction(rawTransaction, privateKey);
 
     this._sendTransaction(transaction);
-
 
     const isMinter = await contract.methods.isMinter(myAddress).call();
 
@@ -65,25 +67,22 @@ class tokenInterface {
     return balanceOf;
   }
 
-  _buildTransaction(from, to, method, count, value = "0x0"){
-
-    
+  _buildTransaction(from, to, method, count, value = "0x0") {
     const gasPrice = web3.utils.toHex(20 * 1e9);
-    const gasLimit =  web3.utils.toHex(210000);
+    const gasLimit = web3.utils.toHex(210000);
     const nonce = web3.utils.toHex(count);
-    
 
     const rawTransaction = this._rawTxbuilder(
-        from,
-        gasPrice,
-        gasLimit,
-        to,
-        value,
-        method,
-        nonce,
-      );
+      from,
+      gasPrice,
+      gasLimit,
+      to,
+      value,
+      method,
+      nonce
+    );
 
-      return rawTransaction;
+    return rawTransaction;
   }
 
   _rawTxbuilder(from, gasPrice, gasLimit, to, value, data, nonce) {
@@ -128,10 +127,29 @@ class tokenInterface {
 
   async mint(addressTo, tokenId) {}
 
+  async mintToken(URI, tokenId = null) {
+    if (!tokenId) {
+      tokenId = await this.getCount();
+    }
+    this.mintWithTokenURI(myAddress, tokenId, URI);
+  }
+
   async mintWithTokenURI(addressTo, tokenId, URIString) {
     const count = await this.getCount();
 
+    const contractMethod = contract.methods
+      .mintWithTokenURI(addressTo, tokenId, URIString)
+      .encodeABI();
 
+    const rawTransaction = this._buildTransaction(
+      addressTo,
+      contractAddress,
+      contractMethod,
+      count
+    );
+
+    const transaction = this._signTransaction(rawTransaction, privateKey);
+    this._sendTransaction(transaction);
   }
 
   async renounceMinter() {}
@@ -165,11 +183,9 @@ class tokenInterface {
   async tokenURI(tokenId) {}
 
   async totalSupply() {
-    let totalCount = await contract.methods.totalSupply.call();
+    const totalCount = await contract.methods.totalSupply.call();
     return totalCount;
   }
-
-
 
   static connect(values) {
     return new tokenInterface(values);
