@@ -3,15 +3,9 @@ var fs = require('fs');
 var md5 = require('md5');
 var path = require('path');
 
-const deploy = require('./test2');
-
-// chokidar.watch('.', {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
-//     console.log(event, path);
-//     if (event == "add"){
-//         console.log(`New File added: ${path}`)
-//     }
-//   });
-
+//const deploy = require('./test2');
+const TokenInterface = require('./tokenInterface');
+const tokenInterface = new TokenInterface("hello");
 
 let files = [];
 
@@ -43,8 +37,8 @@ watcher.on('change', async (thisPath) => {
             }
 
             files.push(fileStructure);
-            const balance = await deploy(fileHash);
-            console.log("Array is: ", files)
+            const balance = await tokenInterface.deploy(fileHash);
+            //console.log("Array is: ", files)
 
         });
 

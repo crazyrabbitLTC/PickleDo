@@ -5,7 +5,6 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 const Tx = require('ethereumjs-tx');
 const testToken = require("../build/contracts/testToken");
 const memonic = "detail august fragile luggage coyote home trap veteran witness result feed blade";
-
 const provider = new HDWalletProvider(
   memonic,
   "HTTP://127.0.0.1:7545"
@@ -55,7 +54,7 @@ const deploy = async (uri) => {
     nonce: web3.utils.toHex(count)
   };
 
-  //console.log("Raw Transaction: ", rawTransaction);
+  //console.log("Raw Transaction: ", rawTransaction);  l[ []]
 
   let transaction = new Tx(rawTransaction);
   transaction.sign(privateKey);
@@ -75,7 +74,7 @@ const deploy = async (uri) => {
   
 };
 
-getCount();
+
 deploy("My name is same!");
 
 module.exports = deploy;
