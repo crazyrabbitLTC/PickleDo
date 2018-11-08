@@ -24,8 +24,8 @@ const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 class tokenInterface {
   constructor(values) {
-    this.values = values;
 
+    this.values = values;
     this.txLog = {};
     this.txIndex = [];
   }
@@ -39,11 +39,11 @@ class tokenInterface {
     console.log("Using Module Class Version");
 
     const balanceOf = await contract.methods.balanceOf(myAddress).call();
-    const accounts = await web3.eth.getAccounts();
+    //const accounts = await web3.eth.getAccounts();
     let totalCount = await contract.methods.totalSupply.call();
 
     const count = await this.getCount();
-    console.log("Accounts: ", accounts);
+    console.log("Accounts: ", this.accounts);
     console.log("Count: ", count);
 
 
@@ -51,11 +51,11 @@ class tokenInterface {
     .mintWithTokenURI(myAddress, count, "This is token 1")
     .encodeABI();
 
-    const rawTransaction = this.buildTransaction(myAddress, contractAddress, contractMethod, count);
+    const rawTransaction = this._buildTransaction(myAddress, contractAddress, contractMethod, count);
 
-    const transaction = this.signTransaction(rawTransaction, privateKey)
+    const transaction = this._signTransaction(rawTransaction, privateKey)
 
-    this.sendTransaction(transaction);
+    this._sendTransaction(transaction);
 
 
     const isMinter = await contract.methods.isMinter(myAddress).call();
@@ -65,7 +65,7 @@ class tokenInterface {
     return balanceOf;
   }
 
-  buildTransaction(from, to, method, count, value = "0x0"){
+  _buildTransaction(from, to, method, count, value = "0x0"){
 
     
     const gasPrice = web3.utils.toHex(20 * 1e9);
@@ -73,7 +73,7 @@ class tokenInterface {
     const nonce = web3.utils.toHex(count);
     
 
-    const rawTransaction = this.rawTxbuilder(
+    const rawTransaction = this._rawTxbuilder(
         from,
         gasPrice,
         gasLimit,
@@ -86,13 +86,53 @@ class tokenInterface {
       return rawTransaction;
   }
 
+  _rawTxbuilder(from, gasPrice, gasLimit, to, value, data, nonce) {
+    const rawTransaction = {
+      from,
+      gasPrice,
+      gasLimit,
+      to,
+      value,
+      data,
+      nonce
+    };
+
+    const transaction = new Tx(rawTransaction);
+
+    return transaction;
+  }
+
+  _signTransaction(transaction, privateKey) {
+    transaction.sign(privateKey);
+
+    return transaction;
+  }
+
+  _sendTransaction(transaction) {
+    web3.eth
+      .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
+      .once("transactionHash", hash => {
+        console.log("Hash made! ", hash);
+      })
+      .once("receipt", receipt => {
+        this.txLog[receipt.transactionHash] = receipt;
+        this.txIndex.push(receipt.transactionHash);
+        //console.log("Added to object", this.txLog[receipt.transactionHash]);
+        console.log("txIndex: ", this.txIndex);
+      });
+  }
+
   async addMinter(address) {}
 
   async approve(addressTo, tokenId) {}
 
   async mint(addressTo, tokenId) {}
 
-  async mintWithTokenURI(addressTo, tokenId, URIString) {}
+  async mintWithTokenURI(addressTo, tokenId, URIString) {
+    const count = await this.getCount();
+
+
+  }
 
   async renounceMinter() {}
 
@@ -124,43 +164,12 @@ class tokenInterface {
 
   async tokenURI(tokenId) {}
 
-  async totalSupply() {}
-
-  rawTxbuilder(from, gasPrice, gasLimit, to, value, data, nonce) {
-    const rawTransaction = {
-      from,
-      gasPrice,
-      gasLimit,
-      to,
-      value,
-      data,
-      nonce
-    };
-
-    const transaction = new Tx(rawTransaction);
-
-    return transaction;
+  async totalSupply() {
+    let totalCount = await contract.methods.totalSupply.call();
+    return totalCount;
   }
 
-  signTransaction(transaction, privateKey) {
-    transaction.sign(privateKey);
 
-    return transaction;
-  }
-
-  sendTransaction(transaction) {
-    web3.eth
-      .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
-      .once("transactionHash", hash => {
-        console.log("Hash made! ", hash);
-      })
-      .once("receipt", receipt => {
-        this.txLog[receipt.transactionHash] = receipt;
-        this.txIndex.push(receipt.transactionHash);
-        //console.log("Added to object", this.txLog[receipt.transactionHash]);
-        console.log("txIndex: ", this.txIndex);
-      });
-  }
 
   static connect(values) {
     return new tokenInterface(values);
