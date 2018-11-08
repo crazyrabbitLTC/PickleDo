@@ -51,19 +51,9 @@ class tokenInterface {
     .mintWithTokenURI(myAddress, count, "This is token 1")
     .encodeABI();
 
-    var rawTransaction = this.buildTransaction(
-      myAddress,
-      web3.utils.toHex(20 * 1e9),
-      web3.utils.toHex(210000),
-      contractAddress,
-      "0x0",
-      contractMethod,
-      web3.utils.toHex(count)
-    );
+    const rawTransaction = this.buildTransaction(myAddress, contractAddress, contractMethod, count);
 
-
-
-    let transaction = this.signTransaction(rawTransaction, privateKey)
+    const transaction = this.signTransaction(rawTransaction, privateKey)
 
     this.sendTransaction(transaction);
 
@@ -73,6 +63,27 @@ class tokenInterface {
     console.log("Name: ", isMinter, " Balance: ", balanceOf);
 
     return balanceOf;
+  }
+
+  buildTransaction(from, to, method, count, value = "0x0"){
+
+    
+    const gasPrice = web3.utils.toHex(20 * 1e9);
+    const gasLimit =  web3.utils.toHex(210000);
+    const nonce = web3.utils.toHex(count);
+    
+
+    const rawTransaction = this.rawTxbuilder(
+        from,
+        gasPrice,
+        gasLimit,
+        to,
+        value,
+        method,
+        nonce,
+      );
+
+      return rawTransaction;
   }
 
   async addMinter(address) {}
@@ -115,7 +126,7 @@ class tokenInterface {
 
   async totalSupply() {}
 
-  buildTransaction(from, gasPrice, gasLimit, to, value, data, nonce) {
+  rawTxbuilder(from, gasPrice, gasLimit, to, value, data, nonce) {
     const rawTransaction = {
       from,
       gasPrice,
