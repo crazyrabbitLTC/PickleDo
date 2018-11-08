@@ -116,25 +116,11 @@ class tokenInterface {
       .once("receipt", receipt => {
         this.txLog[receipt.transactionHash] = receipt;
         this.txIndex.push(receipt.transactionHash);
-        //console.log("Added to object", this.txLog[receipt.transactionHash]);
         console.log("txIndex: ", this.txIndex);
       });
   }
 
-  async addMinter(address) {}
-
-  async approve(addressTo, tokenId) {}
-
-  async mint(addressTo, tokenId) {}
-
-  async mintToken(URI, tokenId = null) {
-    if (!tokenId) {
-      tokenId = await this.getCount();
-    }
-    this.mintWithTokenURI(myAddress, tokenId, URI);
-  }
-
-  async mintWithTokenURI(addressTo, tokenId, URIString) {
+  async _mintWithTokenURI(addressTo, tokenId, URIString) {
     const count = await this.getCount();
 
     const contractMethod = contract.methods
@@ -150,6 +136,19 @@ class tokenInterface {
 
     const transaction = this._signTransaction(rawTransaction, privateKey);
     this._sendTransaction(transaction);
+  }
+
+  async addMinter(address) {}
+
+  async approve(addressTo, tokenId) {}
+
+  async mint(addressTo, tokenId) {}
+
+  async mintToken(URI, tokenId = null) {
+    if (!tokenId) {
+      tokenId = await this.getCount();
+    }
+    this._mintWithTokenURI(myAddress, tokenId, URI);
   }
 
   async renounceMinter() {}

@@ -43,14 +43,9 @@ watcher.on('change', async (thisPath) => {
         });
 
 
-    
-
-        
         //console.log("Balance after operation is: ", balance);
     } catch (err) {
         console.log(err);
     }
-
-
 });
 
