@@ -54,19 +54,24 @@ const deploy = async (uri) => {
     nonce: web3.utils.toHex(count)
   };
 
-  //console.log("Raw Transaction: ", rawTransaction);  l[ []]
+  ///////
 
   let transaction = new Tx(rawTransaction);
   transaction.sign(privateKey);
 
   web3.eth
     .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
-    .on("transactionHash", console.log);
+    .once("transactionHash", (hash) => {
+        console.log("Hash made! ", hash);
+    }).once('receipt', function(receipt){console.log(['transferToReceiver Receipt:', receipt]);})
+    .on('confirmation', (confirmationNumber) => {console.log('transferToReceiver confirmation: ' + confirmationNumber);})
+    
+
 
   const isMinter = await contract.methods.isMinter(myAddress).call();
   
 
-  console.log("Name: ", isMinter, " Balance: ", balanceOf);
+  console.log("" Balance: ", balanceOf);
 
   
 

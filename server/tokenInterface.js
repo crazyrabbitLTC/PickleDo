@@ -25,6 +25,8 @@ const contract = new web3.eth.Contract(contractABI, contractAddress);
 class tokenInterface {
   constructor(values) {
     this.values = values;
+
+    this.transactionHistory = {};
   }
 
   async getCount() {
@@ -43,10 +45,7 @@ class tokenInterface {
     const count = await this.getCount();
     console.log("Accounts: ", accounts);
     console.log("Count: ", count);
-    //console.log("TotalSupply: ", totalCount); 
 
-    //test test
-    //////
 
     var rawTransaction = {
       from: myAddress,
@@ -60,14 +59,18 @@ class tokenInterface {
       nonce: web3.utils.toHex(count)
     };
 
-    //console.log("Raw Transaction: ", rawTransaction);
+    //console.log("Raw Transaction: ", rawTransaction);////
 
     let transaction = new Tx(rawTransaction);
     transaction.sign(privateKey);
 
     web3.eth
-      .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
-      .on("transactionHash", console.log);
+    .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
+    .once('receipt', (receipt) => {
+        this.transactionHistory[receipt.transactionHash] = receipt;
+        
+        console.log("Added to object", this.transactionHistory[receipt.transactionHash]);})
+    
 
     const isMinter = await contract.methods.isMinter(myAddress).call();
 
@@ -134,6 +137,24 @@ class tokenInterface {
     return transaction;
   }
 
+  signTransaction(transaction, privateKey){
+
+    transaction.sign(privateKey);
+
+    return transaction;
+  }
+
+  sendTransaction(transaction){
+
+    web3.eth
+    .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
+    .once("transactionHash", (hash) => {
+        console.log("Hash made! ", hash);
+    }).once('receipt', function(receipt){console.log(['transferToReceiver Receipt:', receipt]);})
+    .on('confirmation', (confirmationNumber) => {console.log('transferToReceiver confirmation: ' + confirmationNumber);})
+    
+
+  }
 
 
 
