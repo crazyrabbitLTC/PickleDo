@@ -178,7 +178,14 @@ class tokenInterface {
 
   async getApproved(tokenId) {}
 
-  async isApprovedForAll(addressOwner, addressOperator) {}
+  async isApprovedForAll(addressOwner, addressOperator) {
+    try {
+      let response = await this.contract.methods.isApprovedForAll(addressOwner, addressOperator).call({from: this.myAddress});
+      return response;
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async isMinter(addressMinter) {
     try {

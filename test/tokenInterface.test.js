@@ -95,11 +95,12 @@ describe("tokenInterface", () => {
       assert.equal(response, expectedName);
   })
 
-  it("Should return status of address as minter...", async () => {
+  it("Should return status of isMinter for an address...", async () => {
       const address = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
       let response = await tokenInterface.isMinter(address);
       assert.ok(response);
   })
+  
 
 
   // it('Should add a minter', async (done) => {
