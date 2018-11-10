@@ -168,7 +168,23 @@ class tokenInterface {
 
   async renounceMinter() {}
 
-  async safeTransferFrom(addressFrom, addressTo, tokenId) {}
+  async safeTransferFrom(addressFrom, addressTo, tokenId) {
+    const count = await this.getTxCount();
+
+    const contractMethod = this.contract.methods
+      .safeTransferFrom(addressFrom, addressTo, tokenId)
+      .encodeABI();
+
+    const rawTransaction = this._buildTransaction(
+      this.myAddress,
+      this.contractAddress,
+      contractMethod,
+      count
+    );
+
+    const transaction = this._signTransaction(rawTransaction, this.privateKey);
+    return this._sendTransaction(transaction);
+  }
 
   async setApprovalForAll(addressTo, boolApproved) {
     const count = await this.getTxCount();
