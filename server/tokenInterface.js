@@ -192,14 +192,33 @@ class tokenInterface {
 
   async tokenByIndex(index) {}
 
-  async tokenOfOwnerByIndex(addressOwner, index) {}
+  async tokenOfOwnerByIndex(addressOwner, index) {
+    try {
+      let tokenOfOwner = await this.contract.methods.tokenOfOwnerByIndex(addressOwner, index).call({from: this.myAddress});
+      return tokenOfOwner;
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-  async tokenURI(tokenId) {}
+  async tokenURI(tokenId) {
+    try {
+      let tokenURI = await this.contract.methods.tokenURI(tokenId).call({from: this.myAddress});
+      return tokenURI;
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async totalSupply() {
-   let supply = await this.contract.methods.totalSupply().call({from: this.myAddress});
-    //console.log("This is the total count: ". supply);
-    return supply;
+    try {
+      let supply = await this.contract.methods.totalSupply().call({from: this.myAddress});
+      //console.log("This is the total count: ". supply);
+      return supply;
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   //Just for reference at this point
