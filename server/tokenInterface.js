@@ -172,7 +172,24 @@ class tokenInterface {
 
   async setApprovalForAll(addresTo, boolApproved) {}
 
-  async transferFrom(addressFrom, addressTo, tokenId) {}
+  async transferFrom(addressFrom, addressTo, tokenId) {
+    const count = await this.getTxCount();
+
+    const contractMethod = this.contract.methods
+      .transferFrom(addressFrom, addressTo, tokenId)
+      .encodeABI();
+
+    const rawTransaction = this._buildTransaction(
+      this.myAddress,
+      this.contractAddress,
+      contractMethod,
+      count
+    );
+
+    const transaction = this._signTransaction(rawTransaction, this.privateKey);
+    return this._sendTransaction(transaction);
+    
+  }
 
   async balanceOf(address) {
     try {
