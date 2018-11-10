@@ -149,6 +149,20 @@ describe("tokenInterface", () => {
       assert.equal(response.logs[0].type , "mined");
   })
 
+  xit("Should safeTransfer a token from and address to an address...", async () => {
+    const addressFrom = ganacheAccountZero;
+    const addressTo = "0x4A3EAeA9f76E26084520926EeC8fCd90d1F08a69";
+    const tokenID = 5;
+
+    let response = await tokenInterface.transferFrom(
+      addressFrom,
+      addressTo,
+      tokenID
+    );
+    console.log("Response: ", response);
+    assert.equal(response.logs[0].type, "mined");
+  });
+
 
   // it('Should add a minter', async (done) => {
   //     const result = await tokenInterface.addMinter("0x85A7bAC4da4Bc90820339759E73bee84D1D28c3E");

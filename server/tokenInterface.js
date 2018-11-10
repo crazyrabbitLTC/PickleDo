@@ -168,11 +168,11 @@ class tokenInterface {
 
   async renounceMinter() {}
 
-  async safeTransferFrom(addressFrom, addressTo, tokenId) {
+  async safeTransferFrom(addressFrom, addressTo, tokenId, _data = "0x0") {
     const count = await this.getTxCount();
 
     const contractMethod = this.contract.methods
-      .safeTransferFrom(addressFrom, addressTo, tokenId)
+      .safeTransferFrom(addressFrom, addressTo, tokenId, _data)
       .encodeABI();
 
     const rawTransaction = this._buildTransaction(
