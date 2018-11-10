@@ -82,6 +82,12 @@ describe("tokenInterface", () => {
       assert.ok(!response);
   });
 
+  it("Should respond with the owner address...", async () => {
+      const expectedAddress = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
+      const token = 645
+      let response = await tokenInterface.ownerOf(token);
+      assert.equal(response, expectedAddress);
+  })
 
   
 
