@@ -14,8 +14,9 @@ var watcher = chokidar.watch('.', {
     persistent: true
   });
 
-  
+
   // Something to use when events are received.
+
 var log = console.log.bind(console);
 
 // Add event listeners.
@@ -40,6 +41,7 @@ watcher.on('change', async (thisPath) => {
             files.push(fileStructure);
             const balance = await tokenInterface.mintToken(fileHash);
             //console.log("Array is: ", files)
+            console.log("Balance is: ", balance);
 
         });
 
@@ -49,4 +51,5 @@ watcher.on('change', async (thisPath) => {
         console.log(err);
     }
 });
+
 

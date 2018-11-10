@@ -148,7 +148,17 @@ class tokenInterface {
     if (!tokenId) {
       tokenId = await this.getCount();
     }
-    this._mintWithTokenURI(myAddress, tokenId, URI);
+
+    try {
+      await this._mintWithTokenURI(myAddress, tokenId, URI);
+
+      //If no errors
+      return true
+    } catch (error) {
+      console.log(error);
+      return false
+    }
+    
   }
 
   async renounceMinter() {}
