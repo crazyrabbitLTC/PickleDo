@@ -176,7 +176,14 @@ class tokenInterface {
 
   async balanceOf(address) {}
 
-  async getApproved(tokenId) {}
+  async getApproved(tokenId) {
+    try {
+      let response = await this.contract.methods.getApproved(tokenId).call({from: this.myAddress});
+      return response;
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async isApprovedForAll(addressOwner, addressOperator) {
     try {

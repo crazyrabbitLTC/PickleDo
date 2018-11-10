@@ -49,7 +49,7 @@ describe("tokenInterface", () => {
   it("Should mint a token...", async () => {
     const result = await tokenInterface.mintToken(hash);
     assert.equal(result.logs[0].type, "mined");
-  })
+  });
 
   it("Should increment the supply count by 1...", async () => {
     const count = await tokenInterface.totalSupply();
@@ -72,42 +72,51 @@ describe("tokenInterface", () => {
   });
 
   it("Should return the symbol 'tt'...", async () => {
-      let response = await tokenInterface.symbol();
-      assert.equal(response, "tt");
+    let response = await tokenInterface.symbol();
+    assert.equal(response, "tt");
   });
 
   it("Should respond false for supporting uknown interface...", async () => {
-      const code = "0x032"
-      let response = await tokenInterface.supportsInterFace(code);
-      assert.ok(!response);
+    const code = "0x032";
+    let response = await tokenInterface.supportsInterFace(code);
+    assert.ok(!response);
   });
 
   it("Should respond with the owner address...", async () => {
-      const expectedAddress = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
-      const token = 645
-      let response = await tokenInterface.ownerOf(token);
-      assert.equal(response, expectedAddress);
-  })
+    const expectedAddress = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
+    const token = 645;
+    let response = await tokenInterface.ownerOf(token);
+    assert.equal(response, expectedAddress);
+  });
 
   it("Should respond with the token Name...", async () => {
-      const expectedName = "testToken";
-      let response = await tokenInterface.name();
-      assert.equal(response, expectedName);
-  })
+    const expectedName = "testToken";
+    let response = await tokenInterface.name();
+    assert.equal(response, expectedName);
+  });
 
   it("Should return status of isMinter for an address...", async () => {
-      const address = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
-      let response = await tokenInterface.isMinter(address);
-      assert.ok(response);
-  })
+    const address = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
+    let response = await tokenInterface.isMinter(address);
+    assert.ok(response);
+  });
 
   it("Should return false for an unaproved isApprovedForAll operator...", async () => {
-      const addressOwner = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
-      const addressOperator = "0xBc8a2A1Cb9a192bDb2A167d4d1807F4895d1C65B";
-      let response = await tokenInterface.isApprovedForAll(addressOwner, addressOperator);
-      assert.ok(!response);
-  })
+    const addressOwner = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
+    const addressOperator = "0xBc8a2A1Cb9a192bDb2A167d4d1807F4895d1C65B";
+    let response = await tokenInterface.isApprovedForAll(
+      addressOwner,
+      addressOperator
+    );
+    assert.ok(!response);
+  });
 
+  it("Should return no one is approved for getApproved...", async () => {
+      const tokenId = 645;
+      const nullAddress = "0x0000000000000000000000000000000000000000";
+      let response = await tokenInterface.getApproved(tokenId);
+      assert.equal(response, nullAddress);
+  });
 
   // it('Should add a minter', async (done) => {
   //     const result = await tokenInterface.addMinter("0x85A7bAC4da4Bc90820339759E73bee84D1D28c3E");
