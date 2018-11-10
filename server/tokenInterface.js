@@ -174,7 +174,14 @@ class tokenInterface {
 
   async transferFrom(addressFrom, addressTo, tokenId) {}
 
-  async balanceOf(address) {}
+  async balanceOf(address) {
+    try {
+      let response = await this.contract.methods.balanceOf(address).call({from: this.myAddress});
+      return response;
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async getApproved(tokenId) {
     try {
