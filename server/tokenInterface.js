@@ -182,7 +182,14 @@ class tokenInterface {
 
   async isMinter(addressMinter) {}
 
-  async name() {}
+  async name() {
+    try {
+      let response = await this.contract.methods.name().call({from: this.myAddress});
+      return response;
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async ownerOf(tokenId) {
     try {

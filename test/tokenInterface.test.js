@@ -89,7 +89,11 @@ describe("tokenInterface", () => {
       assert.equal(response, expectedAddress);
   })
 
-  
+  it("Should response with the token Name...", async () => {
+      const expectedName = "testToken";
+      let response = await tokenInterface.name();
+      assert.equal(response, expectedName);
+  })
 
 
   // it('Should add a minter', async (done) => {
