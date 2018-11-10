@@ -41,7 +41,7 @@ class tokenInterface {
     return this.txIndex;
   }
 
-  async getCount() {
+  async getTxCount() {
     const count = await this.web3.eth.getTransactionCount(this.myAddress);
     return count;
   }
@@ -95,7 +95,7 @@ class tokenInterface {
   }
 
   async _mintWithTokenURI(addressTo, tokenId, URIString) {
-    const count = await this.getCount();
+    const count = await this.getTxCount();
 
     const contractMethod = this.contract.methods
       .mintWithTokenURI(addressTo, tokenId, URIString)
@@ -113,7 +113,7 @@ class tokenInterface {
   }
 
   async addMinter(address) {
-    const count = await this.getCount();
+    const count = await this.getTxCount();
 
     const contractMethod = this.contract.methods.addMinter(address).encodeABI();
 
@@ -130,7 +130,7 @@ class tokenInterface {
   }
 
   async approve(addressTo, tokenId) {
-    const count = await this.getCount();
+    const count = await this.getTxCount();
 
     const contractMethod = this.contract.methods
       .approve(addressTo, tokenId)
@@ -152,7 +152,7 @@ class tokenInterface {
 
   async mintToken(URI, tokenId = null) {
     if (!tokenId) {
-      tokenId = await this.getCount();
+      tokenId = await this.getTxCount();
     }
 
     return this._mintWithTokenURI(this.myAddress, tokenId, URI);
@@ -197,8 +197,9 @@ class tokenInterface {
   async tokenURI(tokenId) {}
 
   async totalSupply() {
-    const totalCount = await this.contract.methods.totalSupply.call();
-    return totalCount;
+   let supply = await this.contract.methods.totalSupply().call({from: this.myAddress});
+    //console.log("This is the total count: ". supply);
+    return supply;
   }
 
   //Just for reference at this point
@@ -209,9 +210,10 @@ class tokenInterface {
       .balanceOf(this.myAddress)
       .call();
     //const accounts = await this.web3.eth.getAccounts();
-    let totalCount = await this.contract.methods.totalSupply.call();
+    let totalCount = await this.contract.methods.totalSupply().call({from: this.myAddress});
 
-    const count = await this.getCount();
+    console.log("Total Count is: ", totalCount);
+    const count = await this.getTxCount();
     console.log("Accounts: ", this.accounts);
     console.log("Count: ", count);
 

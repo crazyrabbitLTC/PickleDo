@@ -44,17 +44,34 @@ describe('tokenInterface', () => {
     });
 
     it('Should mint a token', async () => {
-        const result = await tokenInterface.mintToken(hash);
 
-        console.log(result);
+        
+        const result = await tokenInterface.mintToken(hash);
+        
+        //console.log(result);
         // result.once("receipt", receipt => {
         //     this.txLog[receipt.transactionHash] = receipt;
         //     this.txIndex.push(receipt.transactionHash);
         //     console.log("txIndex: ", this.txIndex);
         //   });
-        assert.ok(result);
+
+        //console.log(result.transactionHash);
+        //console.log(result.logs[0].type);
+        assert.equal(result.logs[0].type, "mined");
     }).timeout(3500);
 
+    it('Should increment the supply count by 1', async () => {
+
+        //await tokenInterface.deploy();
+        let count = await tokenInterface.totalSupply();
+
+        console.log("count: ", count);
+        await tokenInterface.mintToken(hash);
+        const count2 = await tokenInterface.totalSupply();
+        console.log("Count2: ", count2);
+        assert.equal(Number(count)+1, Number(count2));
+
+    })
     // it('Should add a minter', async (done) => {
     //     const result = await tokenInterface.addMinter("0x85A7bAC4da4Bc90820339759E73bee84D1D28c3E");
     //     setTimeout(done, 4500);
