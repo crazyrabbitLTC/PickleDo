@@ -100,7 +100,13 @@ describe("tokenInterface", () => {
       let response = await tokenInterface.isMinter(address);
       assert.ok(response);
   })
-  
+
+  it("Should return false for an unaproved isApprovedForAll operator...", async () => {
+      const addressOwner = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
+      const addressOperator = "0xBc8a2A1Cb9a192bDb2A167d4d1807F4895d1C65B";
+      let response = await tokenInterface.isApprovedForAll(addressOwner, addressOperator);
+      assert.ok(!response);
+  })
 
 
   // it('Should add a minter', async (done) => {
