@@ -15,15 +15,15 @@ const memonic =
 
 const provider = new HDWalletProvider(memonic, "HTTP://127.0.0.1:7545");
 
-const contractABI = testToken.abi;
-const contractAddress = "0x21250898ad6044217f5c8bcc6f7e6974c33e8a91";
+//const contractABI = testToken.abi;
+//const contractAddress = "0x21250898ad6044217f5c8bcc6f7e6974c33e8a91";
 
 const web3 = new Web3(provider);
 
-const contract = new web3.eth.Contract(contractABI, contractAddress);
+//const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 class tokenInterface {
-  constructor(values, gas, keypair) {
+  constructor(values, gas, keypair, contractInstance) {
     this.values = values;
     this.txLog = {};
     this.txIndex = [];
@@ -36,6 +36,12 @@ class tokenInterface {
     this.myAddress = myAddress;
     this.privateKey = Buffer.from(privateKey, "hex");
 
+    const {contractABI, contractAddress, contractBuild} = contractInstance;
+    this.contractABI = contractABI;
+    this.contractAddress = contractAddress;
+    this.contractBuild = contractBuild;
+    this.contract = new web3.eth.Contract(this.contractABI, this.contractAddress);
+
   }
 
   async getCount() {
@@ -46,21 +52,21 @@ class tokenInterface {
   async deploy() {
     console.log("Using Module Class Version");
 
-    const balanceOf = await contract.methods.balanceOf(this.myAddress).call();
+    const balanceOf = await this.contract.methods.balanceOf(this.myAddress).call();
     //const accounts = await web3.eth.getAccounts();
-    let totalCount = await contract.methods.totalSupply.call();
+    let totalCount = await this.contract.methods.totalSupply.call();
 
     const count = await this.getCount();
     console.log("Accounts: ", this.accounts);
     console.log("Count: ", count);
 
-    const contractMethod = contract.methods
+    const contractMethod = this.contract.methods
       .mintWithTokenURI(this.myAddress, count, "This is token 1")
       .encodeABI();
 
     const rawTransaction = this._buildTransaction(
       this.myAddress,
-      contractAddress,
+      this.contractAddress,
       contractMethod,
       count
     );
@@ -69,7 +75,7 @@ class tokenInterface {
 
     this._sendTransaction(transaction);
 
-    const isMinter = await contract.methods.isMinter(this.myAddress).call();
+    const isMinter = await this.contract.methods.isMinter(this.myAddress).call();
 
     console.log("Name: ", isMinter, " Balance: ", balanceOf);
 
@@ -133,13 +139,13 @@ class tokenInterface {
   async _mintWithTokenURI(addressTo, tokenId, URIString) {
     const count = await this.getCount();
 
-    const contractMethod = contract.methods
+    const contractMethod = this.contract.methods
       .mintWithTokenURI(addressTo, tokenId, URIString)
       .encodeABI();
 
     const rawTransaction = this._buildTransaction(
       addressTo,
-      contractAddress,
+      this.contractAddress,
       contractMethod,
       count
     );
@@ -201,7 +207,7 @@ class tokenInterface {
   async tokenURI(tokenId) {}
 
   async totalSupply() {
-    const totalCount = await contract.methods.totalSupply.call();
+    const totalCount = await this.contract.methods.totalSupply.call();
     return totalCount;
   }
 

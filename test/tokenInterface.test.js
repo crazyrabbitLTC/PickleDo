@@ -17,7 +17,13 @@ describe('tokenInterface', () => {
         privateKey: "62b8292bc6e27d594b7bf4f71bcb79c85e26cd506704c3f14d21ed1e17cfd9d3",
     }
 
-    const tokenInterface = new TokenInterface("hello", gas, keypair);
+    const contractInstance = {
+        contractBuild: require("../build/contracts/testToken"),
+        contractABI: require("../build/contracts/testToken").abi,
+        contractAddress: "0x21250898ad6044217f5c8bcc6f7e6974c33e8a91",
+    }
+
+    const tokenInterface = new TokenInterface("hello", gas, keypair, contractInstance);
 
     beforeEach(async () => {
         
