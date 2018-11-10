@@ -3,9 +3,13 @@ var fs = require('fs');
 var md5 = require('md5');
 var path = require('path');
 
+const gas = {
+    price: 20 * 1e8,
+    limit: 2100000,
+}
 //const deploy = require('./test2');
 const TokenInterface = require('./tokenInterface');
-const tokenInterface = new TokenInterface("hello");
+const tokenInterface = new TokenInterface("hello", gas);
 
 let files = [];
 

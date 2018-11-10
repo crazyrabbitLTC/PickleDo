@@ -7,11 +7,11 @@ const Tx = require("ethereumjs-tx");
 const testToken = require("../build/contracts/testToken");
 const memonic =
   "detail august fragile luggage coyote home trap veteran witness result feed blade";
-const myAddress = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
-const privateKey = Buffer.from(
-  "62b8292bc6e27d594b7bf4f71bcb79c85e26cd506704c3f14d21ed1e17cfd9d3",
-  "hex"
-);
+// const myAddress = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
+// const privateKey = Buffer.from(
+//   "62b8292bc6e27d594b7bf4f71bcb79c85e26cd506704c3f14d21ed1e17cfd9d3",
+//   "hex"
+// );
 
 const provider = new HDWalletProvider(memonic, "HTTP://127.0.0.1:7545");
 
@@ -23,26 +23,30 @@ const web3 = new Web3(provider);
 const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 class tokenInterface {
-  constructor(values, gas) {
+  constructor(values, gas, keypair) {
     this.values = values;
     this.txLog = {};
     this.txIndex = [];
 
-    const { price, limit} = gas;
+    const { price, limit } = gas;
     this.gasPrice = web3.utils.toHex(price);
     this.gasLimit = web3.utils.toHex(limit);
+
+    const { myAddress, privateKey } = keypair;
+    this.myAddress = myAddress;
+    this.privateKey = Buffer.from(privateKey, "hex");
 
   }
 
   async getCount() {
-    const count = await web3.eth.getTransactionCount(myAddress);
+    const count = await web3.eth.getTransactionCount(this.myAddress);
     return count;
   }
 
   async deploy() {
     console.log("Using Module Class Version");
 
-    const balanceOf = await contract.methods.balanceOf(myAddress).call();
+    const balanceOf = await contract.methods.balanceOf(this.myAddress).call();
     //const accounts = await web3.eth.getAccounts();
     let totalCount = await contract.methods.totalSupply.call();
 
@@ -51,21 +55,21 @@ class tokenInterface {
     console.log("Count: ", count);
 
     const contractMethod = contract.methods
-      .mintWithTokenURI(myAddress, count, "This is token 1")
+      .mintWithTokenURI(this.myAddress, count, "This is token 1")
       .encodeABI();
 
     const rawTransaction = this._buildTransaction(
-      myAddress,
+      this.myAddress,
       contractAddress,
       contractMethod,
       count
     );
 
-    const transaction = this._signTransaction(rawTransaction, privateKey);
+    const transaction = this._signTransaction(rawTransaction, this.privateKey);
 
     this._sendTransaction(transaction);
 
-    const isMinter = await contract.methods.isMinter(myAddress).call();
+    const isMinter = await contract.methods.isMinter(this.myAddress).call();
 
     console.log("Name: ", isMinter, " Balance: ", balanceOf);
 
@@ -73,7 +77,6 @@ class tokenInterface {
   }
 
   _buildTransaction(from, to, method, count, value = "0x0") {
-
     //this needs to be put into configuration object
     const gasPrice = this.gasPrice;
     const gasLimit = this.gasLimit;
@@ -108,8 +111,8 @@ class tokenInterface {
     return transaction;
   }
 
-  _signTransaction(transaction, privateKey) {
-    transaction.sign(privateKey);
+  _signTransaction(transaction) {
+    transaction.sign(this.privateKey);
 
     return transaction;
   }
@@ -141,7 +144,7 @@ class tokenInterface {
       count
     );
 
-    const transaction = this._signTransaction(rawTransaction, privateKey);
+    const transaction = this._signTransaction(rawTransaction, this.privateKey);
     this._sendTransaction(transaction);
   }
 
@@ -157,15 +160,14 @@ class tokenInterface {
     }
 
     try {
-      await this._mintWithTokenURI(myAddress, tokenId, URI);
+      await this._mintWithTokenURI(this.myAddress, tokenId, URI);
 
       //If no errors
-      return true
+      return true;
     } catch (error) {
       console.log(error);
-      return false
+      return false;
     }
-    
   }
 
   async renounceMinter() {}
