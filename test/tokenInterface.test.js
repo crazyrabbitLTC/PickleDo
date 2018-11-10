@@ -71,7 +71,9 @@ describe("tokenInterface", () => {
     assert.equal(Number(response), 5);
   });
 
-  
+  it
+
+
   // it('Should add a minter', async (done) => {
   //     const result = await tokenInterface.addMinter("0x85A7bAC4da4Bc90820339759E73bee84D1D28c3E");
   //     setTimeout(done, 4500);

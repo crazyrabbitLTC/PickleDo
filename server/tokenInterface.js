@@ -190,7 +190,14 @@ class tokenInterface {
 
   async symbol() {}
 
-  async tokenByIndex(index) {}
+  async tokenByIndex(index) {
+    try {
+      let tokenByIndex = await this.contract.methods.tokenByIndex(index).call({from: this.myAddress});
+      return tokenByIndex;
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async tokenOfOwnerByIndex(addressOwner, index) {
     try {
