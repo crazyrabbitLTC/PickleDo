@@ -23,12 +23,11 @@
 //const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 class tokenInterface {
-  constructor(values, gas, keypair, contractInstance, web3Plus) {
-    this.values = values;
+  constructor(gas, keypair, contractInstance, web3Plus) {
     this.txLog = {};
     this.txIndex = [];
 
-    const {Web3, HDWalletProvider, Tx, server} = web3Plus;
+    const { Web3, HDWalletProvider, Tx, server } = web3Plus;
     this.Web3 = Web3;
     this.HDWalletProvider = HDWalletProvider;
     this.Tx = Tx;
@@ -45,54 +44,28 @@ class tokenInterface {
     this.myAddress = myAddress;
     this.privateKey = Buffer.from(privateKey, "hex");
     this.memonic = memonic;
-    
 
-    const {contractABI, contractAddress, contractBuild} = contractInstance;
+    const { contractABI, contractAddress, contractBuild } = contractInstance;
     this.contractABI = contractABI;
     this.contractAddress = contractAddress;
     this.contractBuild = contractBuild;
-    this.contract = new this.web3.eth.Contract(this.contractABI, this.contractAddress);
+    this.contract = new this.web3.eth.Contract(
+      this.contractABI,
+      this.contractAddress
+    );
+  }
 
-    
+  getMostRecentTx() {
+    return this.txLog;
+  }
 
+  getTxHistory() {
+    return this.txIndex;
   }
 
   async getCount() {
     const count = await this.web3.eth.getTransactionCount(this.myAddress);
     return count;
-  }
-
-  async deploy() {
-    console.log("Using Module Class Version");
-
-    const balanceOf = await this.contract.methods.balanceOf(this.myAddress).call();
-    //const accounts = await this.web3.eth.getAccounts();
-    let totalCount = await this.contract.methods.totalSupply.call();
-
-    const count = await this.getCount();
-    console.log("Accounts: ", this.accounts);
-    console.log("Count: ", count);
-
-    const contractMethod = this.contract.methods
-      .mintWithTokenURI(this.myAddress, count, "This is token 1")
-      .encodeABI();
-
-    const rawTransaction = this._buildTransaction(
-      this.myAddress,
-      this.contractAddress,
-      contractMethod,
-      count
-    );
-
-    const transaction = this._signTransaction(rawTransaction, this.privateKey);
-
-    this._sendTransaction(transaction);
-
-    const isMinter = await this.contract.methods.isMinter(this.myAddress).call();
-
-    console.log("Name: ", isMinter, " Balance: ", balanceOf);
-
-    return balanceOf;
   }
 
   _buildTransaction(from, to, method, count, value = "0x0") {
@@ -167,7 +140,22 @@ class tokenInterface {
     this._sendTransaction(transaction);
   }
 
-  async addMinter(address) {}
+  async addMinter(address) {
+    const count = await this.getCount();
+
+    const contractMethod = this.contract.methods.addMinter(address).encodeABI();
+
+    const rawTransaction = this._buildTransaction(
+      address,
+      this.contractAddress,
+      contractMethod,
+      count
+    );
+
+    const transaction = this._signTransaction(rawTransaction, this.privateKey);
+    this._sendTransaction(transaction);
+    return true;
+  }
 
   async approve(addressTo, tokenId) {}
 
@@ -222,6 +210,44 @@ class tokenInterface {
   async totalSupply() {
     const totalCount = await this.contract.methods.totalSupply.call();
     return totalCount;
+  }
+
+  //Just for reference at this point
+  async deploy() {
+    console.log("Using Module Class Version");
+
+    const balanceOf = await this.contract.methods
+      .balanceOf(this.myAddress)
+      .call();
+    //const accounts = await this.web3.eth.getAccounts();
+    let totalCount = await this.contract.methods.totalSupply.call();
+
+    const count = await this.getCount();
+    console.log("Accounts: ", this.accounts);
+    console.log("Count: ", count);
+
+    const contractMethod = this.contract.methods
+      .mintWithTokenURI(this.myAddress, count, "This is token 1")
+      .encodeABI();
+
+    const rawTransaction = this._buildTransaction(
+      this.myAddress,
+      this.contractAddress,
+      contractMethod,
+      count
+    );
+
+    const transaction = this._signTransaction(rawTransaction, this.privateKey);
+
+    this._sendTransaction(transaction);
+
+    const isMinter = await this.contract.methods
+      .isMinter(this.myAddress)
+      .call();
+
+    console.log("Name: ", isMinter, " Balance: ", balanceOf);
+
+    return balanceOf;
   }
 
   static connect(values) {

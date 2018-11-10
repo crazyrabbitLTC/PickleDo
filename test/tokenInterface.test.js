@@ -10,7 +10,7 @@ const server = "HTTP://127.0.0.1:7545";
 
 describe('tokenInterface', () => {
 
-    let hash = "0x31767f2a3ee7defce2e57447a89bf254cf88690d3be1d383ae067206a48ee647";
+    let hash = "test1";
 
     const gas = {
         price: 20 * 1e8,
@@ -36,7 +36,7 @@ describe('tokenInterface', () => {
         server,
     }
 
-    const tokenInterface = new TokenInterface("hello", gas, keypair, contractInstance, web3Plus);
+    const tokenInterface = new TokenInterface(gas, keypair, contractInstance, web3Plus);
 
     beforeEach(async () => {
         
@@ -45,6 +45,11 @@ describe('tokenInterface', () => {
 
     it('Should mint a token', async () => {
         const result = await tokenInterface.mintToken(hash);
+        assert.ok(result);
+    })
+
+    it('Should add a minter', async () => {
+        const result = await tokenInterface.addMinter("0xbc8a2a1cb9a192bdb2a167d4d1807f4895d1c65b");
         assert.ok(result);
     })
 })
