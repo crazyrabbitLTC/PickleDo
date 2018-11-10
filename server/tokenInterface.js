@@ -16,7 +16,7 @@ const privateKey = Buffer.from(
 const provider = new HDWalletProvider(memonic, "HTTP://127.0.0.1:7545");
 
 const contractABI = testToken.abi;
-const contractAddress = "0x6f129fed5004a2a37bcb0965f2a81e2f02f20783";
+const contractAddress = "0x21250898ad6044217f5c8bcc6f7e6974c33e8a91";
 
 const web3 = new Web3(provider);
 
