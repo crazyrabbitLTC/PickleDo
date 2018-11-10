@@ -1,51 +1,64 @@
 "use strict";
 
-const Web3 = require("web3");
-const HDWalletProvider = require("truffle-hdwallet-provider");
-const Tx = require("ethereumjs-tx");
+// const Web3 = require("web3");
+// const HDWalletProvider = require("truffle-hdwallet-provider");
+// const Tx = require("ethereumjs-tx");
 
-const testToken = require("../build/contracts/testToken");
-const memonic =
-  "detail august fragile luggage coyote home trap veteran witness result feed blade";
+//const testToken = require("../build/contracts/testToken");
+// const memonic =
+//   "detail august fragile luggage coyote home trap veteran witness result feed blade";
 // const myAddress = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
 // const privateKey = Buffer.from(
 //   "62b8292bc6e27d594b7bf4f71bcb79c85e26cd506704c3f14d21ed1e17cfd9d3",
 //   "hex"
 // );
 
-const provider = new HDWalletProvider(memonic, "HTTP://127.0.0.1:7545");
+//const provider = new HDWalletProvider(memonic, "HTTP://127.0.0.1:7545");
 
 //const contractABI = testToken.abi;
 //const contractAddress = "0x21250898ad6044217f5c8bcc6f7e6974c33e8a91";
 
-const web3 = new Web3(provider);
+//const web3 = new Web3(provider);
 
 //const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 class tokenInterface {
-  constructor(values, gas, keypair, contractInstance) {
+  constructor(values, gas, keypair, contractInstance, web3Plus) {
     this.values = values;
     this.txLog = {};
     this.txIndex = [];
 
-    const { price, limit } = gas;
-    this.gasPrice = web3.utils.toHex(price);
-    this.gasLimit = web3.utils.toHex(limit);
+    const {Web3, HDWalletProvider, Tx, server} = web3Plus;
+    this.Web3 = Web3;
+    this.HDWalletProvider = HDWalletProvider;
+    this.Tx = Tx;
+    this.server = server;
 
-    const { myAddress, privateKey } = keypair;
+    this.provider = new this.HDWalletProvider(this.memonic, this.server);
+    this.web3 = new this.Web3(this.provider);
+
+    const { price, limit } = gas;
+    this.gasPrice = this.web3.utils.toHex(price);
+    this.gasLimit = this.web3.utils.toHex(limit);
+
+    const { myAddress, privateKey, memonic } = keypair;
     this.myAddress = myAddress;
     this.privateKey = Buffer.from(privateKey, "hex");
+    this.memonic = memonic;
+    
 
     const {contractABI, contractAddress, contractBuild} = contractInstance;
     this.contractABI = contractABI;
     this.contractAddress = contractAddress;
     this.contractBuild = contractBuild;
-    this.contract = new web3.eth.Contract(this.contractABI, this.contractAddress);
+    this.contract = new this.web3.eth.Contract(this.contractABI, this.contractAddress);
+
+    
 
   }
 
   async getCount() {
-    const count = await web3.eth.getTransactionCount(this.myAddress);
+    const count = await this.web3.eth.getTransactionCount(this.myAddress);
     return count;
   }
 
@@ -53,7 +66,7 @@ class tokenInterface {
     console.log("Using Module Class Version");
 
     const balanceOf = await this.contract.methods.balanceOf(this.myAddress).call();
-    //const accounts = await web3.eth.getAccounts();
+    //const accounts = await this.web3.eth.getAccounts();
     let totalCount = await this.contract.methods.totalSupply.call();
 
     const count = await this.getCount();
@@ -86,7 +99,7 @@ class tokenInterface {
     //this needs to be put into configuration object
     const gasPrice = this.gasPrice;
     const gasLimit = this.gasLimit;
-    const nonce = web3.utils.toHex(count);
+    const nonce = this.web3.utils.toHex(count);
 
     const rawTransaction = this._rawTxbuilder(
       from,
@@ -112,7 +125,7 @@ class tokenInterface {
       nonce
     };
 
-    const transaction = new Tx(rawTransaction);
+    const transaction = new this.Tx(rawTransaction);
 
     return transaction;
   }
@@ -124,7 +137,7 @@ class tokenInterface {
   }
 
   _sendTransaction(transaction) {
-    web3.eth
+    this.web3.eth
       .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
       .once("transactionHash", hash => {
         console.log("Hash made! ", hash);
