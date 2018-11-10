@@ -1,27 +1,5 @@
 "use strict";
 
-// const Web3 = require("web3");
-// const HDWalletProvider = require("truffle-hdwallet-provider");
-// const Tx = require("ethereumjs-tx");
-
-//const testToken = require("../build/contracts/testToken");
-// const memonic =
-//   "detail august fragile luggage coyote home trap veteran witness result feed blade";
-// const myAddress = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
-// const privateKey = Buffer.from(
-//   "62b8292bc6e27d594b7bf4f71bcb79c85e26cd506704c3f14d21ed1e17cfd9d3",
-//   "hex"
-// );
-
-//const provider = new HDWalletProvider(memonic, "HTTP://127.0.0.1:7545");
-
-//const contractABI = testToken.abi;
-//const contractAddress = "0x21250898ad6044217f5c8bcc6f7e6974c33e8a91";
-
-//const web3 = new Web3(provider);
-
-//const contract = new web3.eth.Contract(contractABI, contractAddress);
-
 class tokenInterface {
   constructor(gas, keypair, contractInstance, web3Plus) {
     this.txLog = {};
