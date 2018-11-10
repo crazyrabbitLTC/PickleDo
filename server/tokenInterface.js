@@ -186,7 +186,14 @@ class tokenInterface {
 
   async ownerOf(tokenId) {}
 
-  async supportsInterFace(interfaceIdBytes4) {}
+  async supportsInterFace(interfaceIdBytes4) {
+    try {
+      let response = await this.contract.methods.supportsInterface(interfaceIdBytes4).call({from: this.myAddress});
+      return response
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   async symbol() {
     try {

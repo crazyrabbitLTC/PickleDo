@@ -74,7 +74,15 @@ describe("tokenInterface", () => {
   it("Should return the symbol 'tt'...", async () => {
       let response = await tokenInterface.symbol();
       assert.equal(response, "tt");
-  })
+  });
+
+  it("Should respond false for supporting uknown interface...", async () => {
+      const code = "0x032"
+      let response = await tokenInterface.supportsInterFace(code);
+      assert.ok(!response);
+  });
+
+
   
 
 
