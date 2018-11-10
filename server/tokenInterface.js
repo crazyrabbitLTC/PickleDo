@@ -166,7 +166,23 @@ class tokenInterface {
     // }
   }
 
-  async renounceMinter() {}
+  async renounceMinter() {
+    const count = await this.getTxCount();
+
+    const contractMethod = this.contract.methods
+      .renounceMinter()
+      .encodeABI();
+
+    const rawTransaction = this._buildTransaction(
+      this.myAddress,
+      this.contractAddress,
+      contractMethod,
+      count
+    );
+
+    const transaction = this._signTransaction(rawTransaction, this.privateKey);
+    return this._sendTransaction(transaction);
+  }
 
   async safeTransferFrom(addressFrom, addressTo, tokenId, _data = "0x0") {
     const count = await this.getTxCount();
