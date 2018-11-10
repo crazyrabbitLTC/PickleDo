@@ -188,7 +188,14 @@ class tokenInterface {
 
   async supportsInterFace(interfaceIdBytes4) {}
 
-  async symbol() {}
+  async symbol() {
+    try {
+      let symbol = await this.contract.methods.symbol().call({from: this.myAddress});
+      return symbol;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   async tokenByIndex(index) {
     try {

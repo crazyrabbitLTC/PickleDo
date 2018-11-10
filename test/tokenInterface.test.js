@@ -46,31 +46,35 @@ describe("tokenInterface", () => {
 
   beforeEach(async () => {});
 
-  it("Should mint a token", async () => {
+  it("Should mint a token...", async () => {
     const result = await tokenInterface.mintToken(hash);
     assert.equal(result.logs[0].type, "mined");
   })
 
-  it("Should increment the supply count by 1", async () => {
+  it("Should increment the supply count by 1...", async () => {
     const count = await tokenInterface.totalSupply();
     await tokenInterface.mintToken(hash);
     const count2 = await tokenInterface.totalSupply();
     assert.equal(Number(count) + 1, Number(count2));
   });
 
-  it("Should return a Token URI", async () => {
+  it("Should return a Token URI...", async () => {
     const uri = "test1";
     let response = await tokenInterface.tokenURI(645);
     assert.equal(uri, response);
   });
 
-  it("Should return token of owner by index", async () => {
+  it("Should return token of owner by index...", async () => {
     const address = "0x2ca4488037250f9453032aa8de9be5786c5c178b";
     const index = 1;
     let response = await tokenInterface.tokenOfOwnerByIndex(address, index);
     assert.equal(Number(response), 5);
   });
 
+  it("Should return the symbol 'tt'...", async () => {
+      let response = await tokenInterface.symbol();
+      assert.equal(response, "tt");
+  })
   
 
 
