@@ -70,7 +70,7 @@ describe("tokenInterface", () => {
     const address = ganacheAccountZero;
     const index = 1;
     let response = await tokenInterface.tokenOfOwnerByIndex(address, index);
-    assert.equal(Number(response), 5);
+    assert.equal(Number(response), 809);
   });
 
   it("Should return the symbol 'tt'...", async () => {
@@ -123,7 +123,6 @@ describe("tokenInterface", () => {
   it("Should return the balance of an address...", async () => {
     const address = ganacheAccountZero;
     let response = await tokenInterface.balanceOf(address);
-    console.log("The balance of address is: ", response);
     assert.ok(response);
   });
 
@@ -146,8 +145,8 @@ describe("tokenInterface", () => {
       const approval = true;
 
       let response = await tokenInterface.setApprovalForAll(addressTo, approval);
-      console.log("Response: ", response);
-      assert.equal(response.log[0].type, ",mined");
+      //console.log("Response: ", response);
+      assert.equal(response.logs[0].type , "mined");
   })
 
 
