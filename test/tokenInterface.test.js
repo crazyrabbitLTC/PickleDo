@@ -149,15 +149,15 @@ describe("tokenInterface", () => {
       assert.equal(response.logs[0].type , "mined");
   })
 
-  xit("Should safeTransfer a token from and address to an address...", async () => {
+  it("Should safeTransfer a token from and address to an address...", async () => {
     const addressFrom = ganacheAccountZero;
     const addressTo = "0x4A3EAeA9f76E26084520926EeC8fCd90d1F08a69";
-    const tokenID = 5;
+    const tokenID = 809;
 
-    let response = await tokenInterface.transferFrom(
+    let response = await tokenInterface.safeTransferFrom(
       addressFrom,
       addressTo,
-      tokenID
+      tokenID,
     );
     console.log("Response: ", response);
     assert.equal(response.logs[0].type, "mined");
