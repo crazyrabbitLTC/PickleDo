@@ -87,16 +87,11 @@ class tokenInterface {
     return transaction;
   }
 
-  _sendTransaction(transaction) {
-    this.web3.eth
-      .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
-      .on("receipt", receipt => {
-        //this.txLog[receipt.transactionHash] = receipt;
-        this.txLog = receipt;
-        this.txIndex.push(receipt.transactionHash);
-        console.log("txIndex: ", this.txIndex);
-        //console.log("txLog: ", this.txLog);
-      });
+  async _sendTransaction(transaction) {
+    return this.web3.eth.sendSignedTransaction(
+      "0x" + transaction.serialize().toString("hex")
+    );
+
   }
 
   async _mintWithTokenURI(addressTo, tokenId, URIString) {
@@ -114,7 +109,7 @@ class tokenInterface {
     );
 
     const transaction = this._signTransaction(rawTransaction, this.privateKey);
-    this._sendTransaction(transaction);
+    return this._sendTransaction(transaction);
   }
 
   async addMinter(address) {
@@ -137,7 +132,9 @@ class tokenInterface {
   async approve(addressTo, tokenId) {
     const count = await this.getCount();
 
-    const contractMethod = this.contract.methods.approve(addressTo, tokenId).encodeABI();
+    const contractMethod = this.contract.methods
+      .approve(addressTo, tokenId)
+      .encodeABI();
 
     const rawTransaction = this._buildTransaction(
       this.myAddress,
@@ -149,7 +146,6 @@ class tokenInterface {
     const transaction = this._signTransaction(rawTransaction, this.privateKey);
     this._sendTransaction(transaction);
     return true;
-
   }
 
   async mint(addressTo, tokenId) {}
@@ -159,15 +155,15 @@ class tokenInterface {
       tokenId = await this.getCount();
     }
 
-    try {
-      await this._mintWithTokenURI(this.myAddress, tokenId, URI);
+    return this._mintWithTokenURI(this.myAddress, tokenId, URI);
 
-      //If no errors
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
+    // try {
+    //   return  this._mintWithTokenURI(this.myAddress, tokenId, URI);
+
+    // } catch (error) {
+    //   console.log(error);
+    //   return false;
+    // }
   }
 
   async renounceMinter() {}

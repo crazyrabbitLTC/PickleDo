@@ -43,15 +43,22 @@ describe('tokenInterface', () => {
 
     });
 
-    it('Should mint a token', async (done) => {
+    it('Should mint a token', async () => {
         const result = await tokenInterface.mintToken(hash);
-        setTimeout(done, 4500);
-        assert.ok(result);
-    })
 
-    it('Should add a minter', async (done) => {
-        const result = await tokenInterface.addMinter("0x85A7bAC4da4Bc90820339759E73bee84D1D28c3E");
-        setTimeout(done, 4500);
+        console.log(result);
+        // result.once("receipt", receipt => {
+        //     this.txLog[receipt.transactionHash] = receipt;
+        //     this.txIndex.push(receipt.transactionHash);
+        //     console.log("txIndex: ", this.txIndex);
+        //   });
         assert.ok(result);
-    })
+    }).timeout(3500);
+
+    // it('Should add a minter', async (done) => {
+    //     const result = await tokenInterface.addMinter("0x85A7bAC4da4Bc90820339759E73bee84D1D28c3E");
+    //     setTimeout(done, 4500);
+    //     assert.ok(result);
+    // })
 })
+
