@@ -8,6 +8,8 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 const Tx = require("ethereumjs-tx");
 const server = "HTTP://127.0.0.1:7545";
 
+const ganacheAccountZero = "0x2ca4488037250f9453032aa8de9be5786c5c178b";
+
 describe("tokenInterface", () => {
   let hash = "test1";
 
@@ -65,7 +67,7 @@ describe("tokenInterface", () => {
   });
 
   it("Should return token of owner by index...", async () => {
-    const address = "0x2ca4488037250f9453032aa8de9be5786c5c178b";
+    const address = ganacheAccountZero;
     const index = 1;
     let response = await tokenInterface.tokenOfOwnerByIndex(address, index);
     assert.equal(Number(response), 5);
@@ -83,10 +85,10 @@ describe("tokenInterface", () => {
   });
 
   it("Should respond with the owner address...", async () => {
-    const expectedAddress = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
+    const expectedAddress = ganacheAccountZero;
     const token = 645;
     let response = await tokenInterface.ownerOf(token);
-    assert.equal(response, expectedAddress);
+    assert.equal(response.toLowerCase(), expectedAddress);
   });
 
   it("Should respond with the token Name...", async () => {
@@ -96,13 +98,13 @@ describe("tokenInterface", () => {
   });
 
   it("Should return status of isMinter for an address...", async () => {
-    const address = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
+    const address = ganacheAccountZero;
     let response = await tokenInterface.isMinter(address);
     assert.ok(response);
   });
 
   it("Should return false for an unaproved isApprovedForAll operator...", async () => {
-    const addressOwner = "0x2cA4488037250f9453032aA8dE9bE5786c5c178B";
+    const addressOwner = ganacheAccountZero;
     const addressOperator = "0xBc8a2A1Cb9a192bDb2A167d4d1807F4895d1C65B";
     let response = await tokenInterface.isApprovedForAll(
       addressOwner,
@@ -117,6 +119,15 @@ describe("tokenInterface", () => {
       let response = await tokenInterface.getApproved(tokenId);
       assert.equal(response, nullAddress);
   });
+
+  it("Should return the balance of an address...", async () => {
+      const address = ganacheAccountZero;
+      let response = await tokenInterface.balanceOf(address);
+      console.log("The balance of address is: ", response);
+      assert.ok(response);
+  })
+
+
 
   // it('Should add a minter', async (done) => {
   //     const result = await tokenInterface.addMinter("0x85A7bAC4da4Bc90820339759E73bee84D1D28c3E");
