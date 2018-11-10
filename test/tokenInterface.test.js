@@ -6,16 +6,20 @@ const TokenInterface = require('../server/tokenInterface');
 describe('tokenInterface', () => {
 
     let hash = "0x31767f2a3ee7defce2e57447a89bf254cf88690d3be1d383ae067206a48ee647";
-    const tokenInterface = new TokenInterface("hello");
+    const gas = {
+        price: 20 * 1e8,
+        limit: 2100000,
+    }
+
+    const tokenInterface = new TokenInterface("hello", gas);
 
     beforeEach(async () => {
-        await tokenInterface.mintToken(hash);
+        
 
     });
 
-    it('Should mint a token', async done => {
-        
-        let balance = "hello";
-        assert.deepEqual(balance, "hello");
+    it('Should mint a token', async () => {
+        const result = await tokenInterface.mintToken(hash);
+        assert.ok(result);
     })
 })

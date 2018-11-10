@@ -23,10 +23,15 @@ const web3 = new Web3(provider);
 const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 class tokenInterface {
-  constructor(values) {
+  constructor(values, gas) {
     this.values = values;
     this.txLog = {};
     this.txIndex = [];
+
+    const { price, limit} = gas;
+    this.gasPrice = web3.utils.toHex(price);
+    this.gasLimit = web3.utils.toHex(limit);
+
   }
 
   async getCount() {
@@ -68,8 +73,10 @@ class tokenInterface {
   }
 
   _buildTransaction(from, to, method, count, value = "0x0") {
-    const gasPrice = web3.utils.toHex(20 * 1e9);
-    const gasLimit = web3.utils.toHex(210000);
+
+    //this needs to be put into configuration object
+    const gasPrice = this.gasPrice;
+    const gasLimit = this.gasLimit;
     const nonce = web3.utils.toHex(count);
 
     const rawTransaction = this._rawTxbuilder(
