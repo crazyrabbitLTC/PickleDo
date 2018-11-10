@@ -49,7 +49,7 @@ describe("tokenInterface", () => {
   it("Should mint a token", async () => {
     const result = await tokenInterface.mintToken(hash);
     assert.equal(result.logs[0].type, "mined");
-  }).timeout(3500);
+  })
 
   it("Should increment the supply count by 1", async () => {
     const count = await tokenInterface.totalSupply();
@@ -71,7 +71,7 @@ describe("tokenInterface", () => {
     assert.equal(Number(response), 5);
   });
 
-  it
+  
 
 
   // it('Should add a minter', async (done) => {
