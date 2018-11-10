@@ -90,13 +90,12 @@ class tokenInterface {
   _sendTransaction(transaction) {
     this.web3.eth
       .sendSignedTransaction("0x" + transaction.serialize().toString("hex"))
-      .once("transactionHash", hash => {
-        console.log("Hash made! ", hash);
-      })
-      .once("receipt", receipt => {
-        this.txLog[receipt.transactionHash] = receipt;
+      .on("receipt", receipt => {
+        //this.txLog[receipt.transactionHash] = receipt;
+        this.txLog = receipt;
         this.txIndex.push(receipt.transactionHash);
         console.log("txIndex: ", this.txIndex);
+        //console.log("txLog: ", this.txLog);
       });
   }
 
@@ -124,7 +123,7 @@ class tokenInterface {
     const contractMethod = this.contract.methods.addMinter(address).encodeABI();
 
     const rawTransaction = this._buildTransaction(
-      address,
+      this.myAddress,
       this.contractAddress,
       contractMethod,
       count
@@ -135,7 +134,23 @@ class tokenInterface {
     return true;
   }
 
-  async approve(addressTo, tokenId) {}
+  async approve(addressTo, tokenId) {
+    const count = await this.getCount();
+
+    const contractMethod = this.contract.methods.approve(addressTo, tokenId).encodeABI();
+
+    const rawTransaction = this._buildTransaction(
+      this.myAddress,
+      this.contractAddress,
+      contractMethod,
+      count
+    );
+
+    const transaction = this._signTransaction(rawTransaction, this.privateKey);
+    this._sendTransaction(transaction);
+    return true;
+
+  }
 
   async mint(addressTo, tokenId) {}
 

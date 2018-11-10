@@ -43,13 +43,15 @@ describe('tokenInterface', () => {
 
     });
 
-    it('Should mint a token', async () => {
+    it('Should mint a token', async (done) => {
         const result = await tokenInterface.mintToken(hash);
+        setTimeout(done, 4500);
         assert.ok(result);
     })
 
-    it('Should add a minter', async () => {
-        const result = await tokenInterface.addMinter("0xbc8a2a1cb9a192bdb2a167d4d1807f4895d1c65b");
+    it('Should add a minter', async (done) => {
+        const result = await tokenInterface.addMinter("0x85A7bAC4da4Bc90820339759E73bee84D1D28c3E");
+        setTimeout(done, 4500);
         assert.ok(result);
     })
 })
