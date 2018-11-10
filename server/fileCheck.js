@@ -13,6 +13,8 @@ var watcher = chokidar.watch('.', {
     ignored: /(^|[\/\\])\../,
     persistent: true
   });
+
+  
   // Something to use when events are received.
 var log = console.log.bind(console);
 
