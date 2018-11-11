@@ -14,10 +14,9 @@ const networkId = 5777;
 const ganacheAccountZero = "0x2ca4488037250f9453032aa8de9be5786c5c178b";
 
 describe("tokenInterface", () => {
- 
-    //Accessible for all the tests
-    let tokenId;
-    let tokenURI;
+  //Accessible for all the tests
+  let tokenId;
+  let tokenURI;
 
   let mintedtokens = {};
 
@@ -64,8 +63,6 @@ describe("tokenInterface", () => {
     // })
   });
 
-
-
   it("Should mint a token...", async () => {
     tokenURI = uuidv4();
 
@@ -81,7 +78,10 @@ describe("tokenInterface", () => {
         }
         //console.log("The Event", event);
         tokenId = event.returnValues.tokenId;
-        console.log("Token Id: (transfered from 0x0) ", event.returnValues.tokenId);
+        // console.log(
+        //   "Token Id: (transfered from 0x0) ",
+        //   event.returnValues.tokenId
+        // );
         assert.equal(event.event, "Transfer");
       }
     );
@@ -90,7 +90,6 @@ describe("tokenInterface", () => {
   }).timeout(5000);
 
   it("Should return a Token URI...", async () => {
-
     let response = await tokenInterface.tokenURI(tokenId);
     //console.log("Token ID: ", tokenId , " URI: ", response);
     assert.equal(tokenURI, response);
@@ -103,18 +102,14 @@ describe("tokenInterface", () => {
     let tokensOwned = await tokenInterface.balanceOf(address);
 
     let success = true;
-    
-    for(let x = 0; x < tokensOwned; x++){
-      ownedTokens.push(await tokenInterface.tokenOfOwnerByIndex(address, x))
+
+    for (let x = 0; x < tokensOwned; x++) {
+      ownedTokens.push(await tokenInterface.tokenOfOwnerByIndex(address, x));
     }
 
-    for(let x = 0; x < ownedTokens.length; x++){
+    for (let x = 0; x < ownedTokens.length; x++) {
       let owner = await tokenInterface.ownerOf(ownedTokens[x]);
-      console.log("Owner is: ", owner.toLowerCase(), " Address is: ", address);
-        if (owner.toLowerCase() !== address){
-          console.log("NOT EQUAL");
-          console.dir(owner);
-          console.dir(address);
+      if (owner.toLowerCase() !== address) {
         success = false;
       }
     }
