@@ -76,12 +76,9 @@ describe("tokenInterface", () => {
           console.log(error);
           assert.equal(event.event, "Transfer");
         }
-        //console.log("The Event", event);
+
         tokenId = event.returnValues.tokenId;
-        // console.log(
-        //   "Token Id: (transfered from 0x0) ",
-        //   event.returnValues.tokenId
-        // );
+
         assert.equal(event.event, "Transfer");
       }
     );
@@ -91,7 +88,7 @@ describe("tokenInterface", () => {
 
   it("Should return a Token URI...", async () => {
     let response = await tokenInterface.tokenURI(tokenId);
-    //console.log("Token ID: ", tokenId , " URI: ", response);
+
     assert.equal(tokenURI, response);
   });
 
@@ -113,11 +110,8 @@ describe("tokenInterface", () => {
         success = false;
       }
     }
-    console.log("Tokens owned Array: ", ownedTokens);
+
     assert.ok(success);
-    //let response = await tokenInterface.tokenOfOwnerByIndex(address, index);
-    //console.log("Token of Owner: ", response, " tokensOwned ", tokensOwned);
-    //assert.equal(Number(response), tokenId);
   });
 
   xit("Should return the symbol 'tt'...", async () => {
