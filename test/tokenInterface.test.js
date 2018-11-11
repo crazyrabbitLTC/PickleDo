@@ -8,6 +8,9 @@ const Web3 = require("web3");
 const HDWalletProvider = require("truffle-hdwallet-provider");
 const Tx = require("ethereumjs-tx");
 const server = "HTTP://127.0.0.1:7545";
+const wsServer = "ws://localhost:7545";
+const networkId = 5777;
+
 
 const ganacheAccountZero = "0x2ca4488037250f9453032aa8de9be5786c5c178b";
 
@@ -32,14 +35,15 @@ describe("tokenInterface", () => {
   const contractInstance = {
     contractBuild: require("../build/contracts/testToken"),
     contractABI: require("../build/contracts/testToken").abi,
-    contractAddress: "0x21250898ad6044217f5c8bcc6f7e6974c33e8a91"
+    contractAddress: require("../build/contracts/testToken").networks[networkId].address
   };
 
   const web3Plus = {
     Web3,
     HDWalletProvider,
     Tx,
-    server
+    server,
+    wsServer,
   };
 
   const tokenInterface = new TokenInterface(
@@ -49,17 +53,38 @@ describe("tokenInterface", () => {
     web3Plus,
   );
 
-  beforeEach(async () => {});
+  beforeEach(async () => {
+
+    // const eventProvider = new Web3.providers.WebsocketProvider(wsServer);
+    // const web3 = new Web3(eventProvider);
+
+    // console.log("Subscribe to blockheader")
+    // web3.eth.subscribe('newBlockHeaders', function (error, blockHeader) {
+    //   if (error) console.log(error)
+    //   console.log("The blockheader ", blockHeader)
+    // })
+      // .on('data', function (blockHeader) {
+      //   // alternatively we can log it here
+      //   console.log(blockHeader)
+      // })
+  });
 
   it("Should mint a token...", async () => {
 
     hash = uuidv4();
+    let events = await tokenInterface.subscribeEventTest();
+
+    events('newBlockHeaders', (error, blockHeader) => {
+      if (error) console.log(error)
+      console.log("Here is blockheader", blockHeader);
+    })
 
     const result = await tokenInterface.mintToken(hash);
-    //console.log(result);
-    //console.log(result.logs[0].topics);
+
     assert.equal(result.logs[0].type, "mined");
   });
+
+  
 
   xit("Should increment the supply count by 1...", async () => {
     const count = await tokenInterface.totalSupply();

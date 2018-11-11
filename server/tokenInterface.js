@@ -5,16 +5,17 @@ class tokenInterface {
     this.txLog = {};
     this.txIndex = [];
 
-    const { Web3, HDWalletProvider, Tx, server } = web3Plus;
+    const { Web3, HDWalletProvider, Tx, server, wsServer } = web3Plus;
     this.Web3 = Web3;
     this.HDWalletProvider = HDWalletProvider;
     this.Tx = Tx;
     this.server = server;
+    this.wsServer = wsServer;
 
     this.provider = new this.HDWalletProvider(this.memonic, this.server);
     this.web3 = new this.Web3(this.provider);
 
-    this.eventPRovider = new this.Web3.providers.WebsocketProvider('ws://localhost:7545');
+    this.eventPRovider = new this.Web3.providers.WebsocketProvider(this.wsServer);
     this.web3.setProvider(this.eventPRovider);
 
 
@@ -35,6 +36,27 @@ class tokenInterface {
       this.contractABI,
       this.contractAddress
     );
+
+    //this.subscribeAllEventsTest();
+  }
+
+  subscribeToAllEvents() {
+
+    return this.web3.eth.subscribe;
+
+    // this.web3.eth.subscribe('newBlockHeaders', (error, blockHeader) => {
+    //   if (error) console.log(error)
+    //   console.log("Here is blockheader", blockHeader);
+    // })
+  }
+
+  subscribeToContractEvents() {
+    this.contract.events.allEvents({
+      fromBlock: 0
+    }, function (error, event) {
+      if (error) console.log(error)
+      console.log("Block Event", event)
+    })
   }
 
   getMostRecentTx() {
