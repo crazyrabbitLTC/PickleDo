@@ -1,6 +1,7 @@
 "use strict";
 
 const assert = require("assert");
+const uuidv4 = require('uuid/v4');
 const TokenInterface = require("../server/tokenInterface");
 
 const Web3 = require("web3");
@@ -12,6 +13,8 @@ const ganacheAccountZero = "0x2ca4488037250f9453032aa8de9be5786c5c178b";
 
 describe("tokenInterface", () => {
   let hash = "test1";
+
+  let mintedtokens = {};
 
   const gas = {
     price: 20 * 1e8,
@@ -43,67 +46,72 @@ describe("tokenInterface", () => {
     gas,
     keypair,
     contractInstance,
-    web3Plus
+    web3Plus,
   );
 
   beforeEach(async () => {});
 
   it("Should mint a token...", async () => {
+
+    hash = uuidv4();
+
     const result = await tokenInterface.mintToken(hash);
+    //console.log(result);
+    //console.log(result.logs[0].topics);
     assert.equal(result.logs[0].type, "mined");
   });
 
-  it("Should increment the supply count by 1...", async () => {
+  xit("Should increment the supply count by 1...", async () => {
     const count = await tokenInterface.totalSupply();
     await tokenInterface.mintToken(hash);
     const count2 = await tokenInterface.totalSupply();
     assert.equal(Number(count) + 1, Number(count2));
   });
 
-  it("Should return a Token URI...", async () => {
+  xit("Should return a Token URI...", async () => {
     const uri = "test1";
     let response = await tokenInterface.tokenURI(645);
     assert.equal(uri, response);
   });
 
-  it("Should return token of owner by index...", async () => {
+  xit("Should return token of owner by index...", async () => {
     const address = ganacheAccountZero;
     const index = 1;
     let response = await tokenInterface.tokenOfOwnerByIndex(address, index);
     assert.equal(Number(response), 809);
   });
 
-  it("Should return the symbol 'tt'...", async () => {
+  xit("Should return the symbol 'tt'...", async () => {
     let response = await tokenInterface.symbol();
     assert.equal(response, "tt");
   });
 
-  it("Should respond false for supporting uknown interface...", async () => {
+  xit("Should respond false for supporting uknown interface...", async () => {
     const code = "0x032";
     let response = await tokenInterface.supportsInterFace(code);
     assert.ok(!response);
   });
 
-  it("Should respond with the owner address...", async () => {
+  xit("Should respond with the owner address...", async () => {
     const expectedAddress = ganacheAccountZero;
     const token = 645;
     let response = await tokenInterface.ownerOf(token);
     assert.equal(response.toLowerCase(), expectedAddress);
   });
 
-  it("Should respond with the token Name...", async () => {
+  xit("Should respond with the token Name...", async () => {
     const expectedName = "testToken";
     let response = await tokenInterface.name();
     assert.equal(response, expectedName);
   });
 
-  it("Should return status of isMinter for an address...", async () => {
+  xit("Should return status of isMinter for an address...", async () => {
     const address = ganacheAccountZero;
     let response = await tokenInterface.isMinter(address);
     assert.ok(response);
   });
 
-  it("Should return false for an unaproved isApprovedForAll operator...", async () => {
+  xit("Should return false for an unaproved isApprovedForAll operator...", async () => {
     const addressOwner = ganacheAccountZero;
     const addressOperator = "0xBc8a2A1Cb9a192bDb2A167d4d1807F4895d1C65B";
     let response = await tokenInterface.isApprovedForAll(
@@ -113,14 +121,14 @@ describe("tokenInterface", () => {
     assert.ok(!response);
   });
 
-  it("Should return no one is approved for getApproved...", async () => {
+  xit("Should return no one is approved for getApproved...", async () => {
     const tokenId = 645;
     const nullAddress = "0x0000000000000000000000000000000000000000";
     let response = await tokenInterface.getApproved(tokenId);
     assert.equal(response, nullAddress);
   });
 
-  it("Should return the balance of an address...", async () => {
+  xit("Should return the balance of an address...", async () => {
     const address = ganacheAccountZero;
     let response = await tokenInterface.balanceOf(address);
     assert.ok(response);
@@ -140,7 +148,7 @@ describe("tokenInterface", () => {
     assert.equal(response.logs[0].type, "mined");
   });
 
-  it("Should approve the transfer of all tokens...", async () => {
+  xit("Should approve the transfer of all tokens...", async () => {
       const addressTo = "0x4A3EAeA9f76E26084520926EeC8fCd90d1F08a69";
       const approval = true;
 
@@ -163,6 +171,7 @@ describe("tokenInterface", () => {
     assert.equal(response.logs[0].type, "mined");
   });
 
+  xit("Renounce Minter...");
 
   // it('Should add a minter', async (done) => {
   //     const result = await tokenInterface.addMinter("0x85A7bAC4da4Bc90820339759E73bee84D1D28c3E");

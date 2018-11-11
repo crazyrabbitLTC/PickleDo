@@ -14,6 +14,10 @@ class tokenInterface {
     this.provider = new this.HDWalletProvider(this.memonic, this.server);
     this.web3 = new this.Web3(this.provider);
 
+    this.eventPRovider = new this.Web3.providers.WebsocketProvider('ws://localhost:7545');
+    this.web3.setProvider(this.eventPRovider);
+
+
     const { price, limit } = gas;
     this.gasPrice = this.web3.utils.toHex(price);
     this.gasLimit = this.web3.utils.toHex(limit);
@@ -125,8 +129,8 @@ class tokenInterface {
     );
 
     const transaction = this._signTransaction(rawTransaction, this.privateKey);
-    this._sendTransaction(transaction);
-    return true;
+    return this._sendTransaction(transaction);
+    
   }
 
   async approve(addressTo, tokenId) {
@@ -144,8 +148,8 @@ class tokenInterface {
     );
 
     const transaction = this._signTransaction(rawTransaction, this.privateKey);
-    this._sendTransaction(transaction);
-    return true;
+    return this._sendTransaction(transaction);
+
   }
 
   async mint(addressTo, tokenId) {}
@@ -157,13 +161,6 @@ class tokenInterface {
 
     return this._mintWithTokenURI(this.myAddress, tokenId, URI);
 
-    // try {
-    //   return  this._mintWithTokenURI(this.myAddress, tokenId, URI);
-
-    // } catch (error) {
-    //   console.log(error);
-    //   return false;
-    // }
   }
 
   async renounceMinter() {
