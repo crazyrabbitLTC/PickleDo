@@ -51,12 +51,15 @@ class tokenInterface {
   }
 
   subscribeToContractEvents() {
-    this.contract.events.allEvents({
-      fromBlock: 0
-    }, function (error, event) {
-      if (error) console.log(error)
-      console.log("Block Event", event)
-    })
+
+    return this.contract.events;
+
+    // this.contract.events.allEvents({
+    //   fromBlock: 0
+    // }, function (error, event) {
+    //   if (error) console.log(error)
+    //   console.log("Block Event", event)
+    // })
   }
 
   getMostRecentTx() {

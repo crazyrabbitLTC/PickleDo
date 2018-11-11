@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("assert");
-const uuidv4 = require('uuid/v4');
+const uuidv4 = require("uuid/v4");
 const TokenInterface = require("../server/tokenInterface");
 
 const Web3 = require("web3");
@@ -10,7 +10,6 @@ const Tx = require("ethereumjs-tx");
 const server = "HTTP://127.0.0.1:7545";
 const wsServer = "ws://localhost:7545";
 const networkId = 5777;
-
 
 const ganacheAccountZero = "0x2ca4488037250f9453032aa8de9be5786c5c178b";
 
@@ -35,7 +34,8 @@ describe("tokenInterface", () => {
   const contractInstance = {
     contractBuild: require("../build/contracts/testToken"),
     contractABI: require("../build/contracts/testToken").abi,
-    contractAddress: require("../build/contracts/testToken").networks[networkId].address
+    contractAddress: require("../build/contracts/testToken").networks[networkId]
+      .address
   };
 
   const web3Plus = {
@@ -43,48 +43,42 @@ describe("tokenInterface", () => {
     HDWalletProvider,
     Tx,
     server,
-    wsServer,
+    wsServer
   };
 
   const tokenInterface = new TokenInterface(
     gas,
     keypair,
     contractInstance,
-    web3Plus,
+    web3Plus
   );
 
   beforeEach(async () => {
-
-    // const eventProvider = new Web3.providers.WebsocketProvider(wsServer);
-    // const web3 = new Web3(eventProvider);
-
-    // console.log("Subscribe to blockheader")
-    // web3.eth.subscribe('newBlockHeaders', function (error, blockHeader) {
+    // let events = await tokenInterface.subscribeToAllEvents();
+    // events('newBlockHeaders', (error, blockHeader) => {
     //   if (error) console.log(error)
-    //   console.log("The blockheader ", blockHeader)
+    //   console.log("Here is blockheader", blockHeader);
     // })
-      // .on('data', function (blockHeader) {
-      //   // alternatively we can log it here
-      //   console.log(blockHeader)
-      // })
   });
 
   it("Should mint a token...", async () => {
-
     hash = uuidv4();
-    let events = await tokenInterface.subscribeEventTest();
 
-    events('newBlockHeaders', (error, blockHeader) => {
-      if (error) console.log(error)
-      console.log("Here is blockheader", blockHeader);
-    })
+    let events = await tokenInterface.subscribeToContractEvents();
+    events.Transfer(
+      {
+        fromBlock: 0
+      },
+      function(error, event) {
+        if (error) console.log(error);
+        console.log("The Event", event);
+      }
+    );
 
     const result = await tokenInterface.mintToken(hash);
 
     assert.equal(result.logs[0].type, "mined");
   });
-
-  
 
   xit("Should increment the supply count by 1...", async () => {
     const count = await tokenInterface.totalSupply();
@@ -174,13 +168,13 @@ describe("tokenInterface", () => {
   });
 
   xit("Should approve the transfer of all tokens...", async () => {
-      const addressTo = "0x4A3EAeA9f76E26084520926EeC8fCd90d1F08a69";
-      const approval = true;
+    const addressTo = "0x4A3EAeA9f76E26084520926EeC8fCd90d1F08a69";
+    const approval = true;
 
-      let response = await tokenInterface.setApprovalForAll(addressTo, approval);
-      //console.log("Response: ", response);
-      assert.equal(response.logs[0].type , "mined");
-  })
+    let response = await tokenInterface.setApprovalForAll(addressTo, approval);
+    //console.log("Response: ", response);
+    assert.equal(response.logs[0].type, "mined");
+  });
 
   xit("Should safeTransfer a token from and address to an address...", async () => {
     const addressFrom = ganacheAccountZero;
@@ -190,7 +184,7 @@ describe("tokenInterface", () => {
     let response = await tokenInterface.safeTransferFrom(
       addressFrom,
       addressTo,
-      tokenID,
+      tokenID
     );
     //console.log("Response: ", response);
     assert.equal(response.logs[0].type, "mined");
