@@ -92,16 +92,37 @@ describe("tokenInterface", () => {
   it("Should return a Token URI...", async () => {
 
     let response = await tokenInterface.tokenURI(tokenId);
-    console.log("Token ID: ", tokenId , " URI: ", response);
+    //console.log("Token ID: ", tokenId , " URI: ", response);
     assert.equal(tokenURI, response);
   });
 
   it("Should return token of owner by index...", async () => {
+    let ownedTokens = [];
     const address = ganacheAccountZero;
-    const index = 1;
-    let response = await tokenInterface.tokenOfOwnerByIndex(address, index);
-    console.log(response);
-    //assert.equal(Number(response), 809);
+    const index = 0;
+    let tokensOwned = await tokenInterface.balanceOf(address);
+
+    let success = true;
+    
+    for(let x = 0; x < tokensOwned; x++){
+      ownedTokens.push(await tokenInterface.tokenOfOwnerByIndex(address, x))
+    }
+
+    for(let x = 0; x < ownedTokens.length; x++){
+      let owner = await tokenInterface.ownerOf(ownedTokens[x]);
+      console.log("Owner is: ", owner.toLowerCase(), " Address is: ", address);
+        if (owner.toLowerCase() !== address){
+          console.log("NOT EQUAL");
+          console.dir(owner);
+          console.dir(address);
+        success = false;
+      }
+    }
+    console.log("Tokens owned Array: ", ownedTokens);
+    assert.ok(success);
+    //let response = await tokenInterface.tokenOfOwnerByIndex(address, index);
+    //console.log("Token of Owner: ", response, " tokensOwned ", tokensOwned);
+    //assert.equal(Number(response), tokenId);
   });
 
   xit("Should return the symbol 'tt'...", async () => {
