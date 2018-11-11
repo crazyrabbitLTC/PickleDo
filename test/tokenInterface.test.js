@@ -14,7 +14,10 @@ const networkId = 5777;
 const ganacheAccountZero = "0x2ca4488037250f9453032aa8de9be5786c5c178b";
 
 describe("tokenInterface", () => {
-  let hash = "test1";
+ 
+    //Accessible for all the tests
+    let tokenId;
+    let tokenURI;
 
   let mintedtokens = {};
 
@@ -61,8 +64,10 @@ describe("tokenInterface", () => {
     // })
   });
 
+
+
   it("Should mint a token...", async () => {
-    hash = uuidv4();
+    tokenURI = uuidv4();
 
     let events = await tokenInterface.subscribeToContractEvents();
     events.Transfer(
@@ -70,27 +75,24 @@ describe("tokenInterface", () => {
         fromBlock: 0
       },
       function(error, event) {
-        if (error) console.log(error);
-        console.log("The Event", event);
+        if (error) {
+          console.log(error);
+          assert.equal(event.event, "Transfer");
+        }
+        //console.log("The Event", event);
+        tokenId = event.returnValues.tokenId;
+        //console.log("Token Id", event.returnValues.tokenId);
+        assert.equal(event.event, "Transfer");
       }
     );
 
-    const result = await tokenInterface.mintToken(hash);
-
-    assert.equal(result.logs[0].type, "mined");
+    const result = await tokenInterface.mintToken(tokenURI);
   });
 
-  xit("Should increment the supply count by 1...", async () => {
-    const count = await tokenInterface.totalSupply();
-    await tokenInterface.mintToken(hash);
-    const count2 = await tokenInterface.totalSupply();
-    assert.equal(Number(count) + 1, Number(count2));
-  });
+  it("Should return a Token URI...", async () => {
 
-  xit("Should return a Token URI...", async () => {
-    const uri = "test1";
-    let response = await tokenInterface.tokenURI(645);
-    assert.equal(uri, response);
+    let response = await tokenInterface.tokenURI(tokenId);
+    assert.equal(tokenURI, response);
   });
 
   xit("Should return token of owner by index...", async () => {
