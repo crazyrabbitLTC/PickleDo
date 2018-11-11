@@ -87,7 +87,7 @@ describe("tokenInterface", () => {
     );
 
     const result = await tokenInterface.mintToken(tokenURI);
-  });
+  }).timeout(5000);
 
   it("Should return a Token URI...", async () => {
 
@@ -99,6 +99,7 @@ describe("tokenInterface", () => {
     const address = ganacheAccountZero;
     const index = 1;
     let response = await tokenInterface.tokenOfOwnerByIndex(address, index);
+    console.log(response);
     assert.equal(Number(response), 809);
   });
 
