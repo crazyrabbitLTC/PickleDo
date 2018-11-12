@@ -14,5 +14,8 @@ contract testToken is ERC721Full, ERC721MetadataMintable, ERC721Mintable {
 
     }
   
+  function bulkMint(address[] addressTo, uint256[] tokenId, bytes32[] uri){
+
+  }
 
 }
