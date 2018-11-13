@@ -58,8 +58,16 @@ watcher.on('change', async (thisPath) => {
 watcher.on('add', filePath => {
 
     console.log("The FilePath is: ", filePath);
-    let jpegData = fs.readFileSync('filePath');
-    let parser = Parser.create(buffer);
-    // let result = parser.parse();    
+    let jpegData = fs.readFileSync(filePath);
+    let parser = Parser.create(jpegData);
+
+    try {
+        let result = parser.parse();
+        console.log("Parsed Data is: ", result);
+    } catch(err) {
+        // got invalid data, handle error
+        console.log(err);
+    }
+ 
 
 })
