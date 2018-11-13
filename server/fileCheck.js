@@ -3,17 +3,16 @@ var fs = require('fs');
 var md5 = require('md5');
 var path = require('path');
 
+var Parser = require('exif-parser');
+
 const gas = {
     price: 20 * 1e8,
     limit: 2100000,
 }
-//const deploy = require('./test2');
-const TokenInterface = require('./tokenInterface');
-const tokenInterface = new TokenInterface("hello", gas);
 
 let files = [];
 
-var watcher = chokidar.watch('.', {
+var watcher = chokidar.watch('./testFolder', {
     ignored: /(^|[\/\\])\../,
     persistent: true
   });
@@ -31,7 +30,8 @@ watcher
 
 watcher.on('change', async (thisPath) => {
 
-//anothe
+
+
     try {
        await fs.readFile(path.join(__dirname, thisPath), async (err, buf) => {
 
@@ -43,17 +43,23 @@ watcher.on('change', async (thisPath) => {
             }
 
             files.push(fileStructure);
-            const balance = await tokenInterface.mintToken(fileHash);
-            //console.log("Array is: ", files)
-            console.log("Balance is: ", balance);
+            console.log("FILES: ", files)
+
 
         });
 
 
-        //console.log("Balance after operation is: ", balance);
     } catch (err) {
         console.log(err);
     }
 });
 
 
+watcher.on('add', filePath => {
+
+    console.log("The FilePath is: ", filePath);
+    let jpegData = fs.readFileSync('filePath');
+    let parser = Parser.create(buffer);
+    // let result = parser.parse();    
+
+})
