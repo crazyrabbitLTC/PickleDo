@@ -55,19 +55,37 @@ watcher.on('change', async (thisPath) => {
 });
 
 
-watcher.on('add', filePath => {
+watcher.on('add', async filePath => {
 
     console.log("The FilePath is: ", filePath);
-    let jpegData = fs.readFileSync(filePath);
-    let parser = Parser.create(jpegData);
+    const jpegData = fs.readFileSync(filePath);
+    const fileHash = await md5(jpegData);
+    const parser = Parser.create(jpegData);
 
+    let result;
     try {
-        let result = parser.parse();
+        result = await parser.parse();
         console.log("Parsed Data is: ", result);
+
     } catch(err) {
         // got invalid data, handle error
         console.log(err);
     }
+
+    let filePathArray = filePath.split('/');
+    console.log("FILE PATH ARRAY", filePathArray)
+    let fileName = filePathArray[1].split('.');
+
+    fs.rename(filePath, `${filePathArray[0]}/finished/${fileName[0]}_${fileHash}.${fileName[1]}`, function (err) {
+        if (err) throw err;
+        console.log('Move complete.');
+      });
+
+      fs.unlink(filePath, function (err) {
+        if (err) throw err;
+        console.log('Deletion sucessful.');
+      });
+    //console.log("Result before promise?", result);
  
 
 })
